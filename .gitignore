@@ -1,0 +1,28 @@
+# Compiled Java class files
+*.class
+
+# Log files
+*.log
+
+# Package files
+*.jar
+*.war
+*.ear
+
+# Build output directories
+/bin/
+/build/
+/out/
+/target/
+
+# IDE settings - IntelliJ
+# (이 한 줄이 .idea 폴더 전체를 무시하게 만듭니다!)
+.idea/
+
+# IDE settings - Eclipse
+.project
+.classpath
+.settings/
+
+# macOS system files
+.DS_Store
