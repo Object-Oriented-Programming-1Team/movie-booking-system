@@ -3,7 +3,7 @@ package moviebooking.model;
 import java.time.LocalDateTime;
 
 public class Screening {
-    private int screeningId;
+    private String screeningId;
     private Movie movie;
     private Screen screen;
     private LocalDateTime startTime;
@@ -11,4 +11,7 @@ public class Screening {
 
     private Seat[][] seats;
 
+    public String getScreeningId() {
+        return screeningId;
+    }
 }

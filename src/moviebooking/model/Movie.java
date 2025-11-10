@@ -8,4 +8,8 @@ public class Movie {
     private String genre;
     private String status;
     private String posterUrl;
+
+    public String getMovieTitle() {
+        return movieTitle;
+    }
 }

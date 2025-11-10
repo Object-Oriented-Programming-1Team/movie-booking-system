@@ -9,4 +9,9 @@ public class Screen {
     private int cols;
 
     // 좌석마다 가격 차등 적용할 경우 변경 필요
+
+
+    public String getScreenId() {
+        return screenId;
+    }
 }
