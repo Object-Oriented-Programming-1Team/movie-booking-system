@@ -7,6 +7,12 @@ public class Seat {
     //private String seatType;
     private int price;
 
+    public Seat(String seatNumber, boolean isBooked, int defaultPrice) {
+        this.seatNumber = seatNumber;
+        this.isBooked = isBooked;
+        this.price = defaultPrice;
+    }
+
     public String getSeatNumber() {
         return seatNumber;
     }
