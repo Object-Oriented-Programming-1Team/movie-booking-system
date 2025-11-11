@@ -1,9 +1,10 @@
 package moviebooking.service;
 
 import moviebooking.common.Manageable;
-import moviebooking.model.Movie;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public abstract class BaseManager<T, ID> implements Manageable<T, ID> {
      protected ArrayList<T> list = new ArrayList<>();
@@ -34,6 +35,32 @@ public abstract class BaseManager<T, ID> implements Manageable<T, ID> {
         } else {
             System.out.println("[WARNING] Item with ID " + id + " not found for deletion");
         }
+    }
+
+    // 자식 클래스들이 구현해야하는 것
+    protected abstract T readItem(Scanner scan);
+
+    public void loadData(String filename) {
+        Scanner filein = openFile(filename);
+        if (filein == null) return;
+
+        while (filein.hasNextLine()) {
+            T item = readItem(filein);
+            if (item != null) {
+                list.add(item);
+            }
+        }
+        filein.close();
+    }
+
+    private Scanner openFile(String filename) {
+        Scanner filein = null;
+        try {
+            filein = new Scanner(new File("resources/" + filename));
+        } catch (Exception e) {
+            System.out.println(filename + ": 파일 열기 실패 - " + e.getMessage());
+        }
+        return filein;
     }
 
 

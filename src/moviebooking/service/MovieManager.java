@@ -4,6 +4,7 @@ import moviebooking.common.Manageable;
 import moviebooking.model.Movie;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class MovieManager extends BaseManager<Movie, String> {
 
@@ -14,6 +15,12 @@ public class MovieManager extends BaseManager<Movie, String> {
                 return movie;
             }
         }
+        return null;
+    }
+
+    //TODO 1 Movie readItem method
+    @Override
+    protected Movie readItem(Scanner scan) {
         return null;
     }
 
