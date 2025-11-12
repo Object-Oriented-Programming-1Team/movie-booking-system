@@ -42,6 +42,7 @@ public class ScreeningFactory {
         screening.setScreen(screen);
         screening.setStartTime(startTime);
         screening.setSeats(seats);
+        screening.setEndTime(startTime.plusMinutes(movie.getRuntime()));
 
         return screening; // '완제품' 반환
     }
