@@ -19,7 +19,7 @@ public class GUIMain extends JFrame {
     private final List<Movie> movieList;
     private final String englishFont = "Bernard MT Condensed";
     private int currentPage = 0;
-    private static final int moviesPerPage = 4;
+    private static final int moviesPerPage = 8;
 
     private JPanel movieDisplayPanel;
 
@@ -50,16 +50,38 @@ public class GUIMain extends JFrame {
         topPanel.setBackground(Color.BLACK);
         topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 
+        //Logo 자리
+        /* 
         JLabel logoLabel = new JLabel("Logo");
         logoLabel.setForeground(Color.WHITE);
         logoLabel.setFont(new Font(englishFont, Font.BOLD, 30));
         topPanel.add(logoLabel, BorderLayout.WEST);
+        */
 
-        JTextField searchField = new JTextField(" search");
+        JPanel emptyPanel = new JPanel();
+        emptyPanel.setBackground(Color.BLACK);
+        emptyPanel.setPreferredSize(new Dimension(150, 0));
+        topPanel.add(emptyPanel, BorderLayout.WEST);
+
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        searchPanel.setBackground(Color.BLACK);
+        searchPanel.setForeground(Color.WHITE);
+
+        JLabel searchLabel = new JLabel("검색");
+        searchLabel.setBackground(Color.BLACK);
+        searchLabel.setForeground(Color.WHITE);
+        searchLabel.setFont(new Font("맑은 고딕", Font.BOLD, 20));
+
+        JTextField searchField = new JTextField();
         searchField.setBackground(Color.BLACK);
         searchField.setForeground(Color.WHITE);
         searchField.setBorder(new LineBorder(Color.WHITE, 1));
-        topPanel.add(searchField, BorderLayout.CENTER);
+        searchField.setPreferredSize(new Dimension(400, 40));
+
+        searchPanel.add(searchLabel);
+        searchPanel.add(searchField);
+
+        topPanel.add(searchPanel, BorderLayout.CENTER);
 
         JButton checkReservationsField = new JButton("예매 조회하기");
         checkReservationsField.setBackground(Color.RED);
@@ -77,7 +99,7 @@ public class GUIMain extends JFrame {
     }
 
     private JPanel createCenterPanel() {
-        JPanel centerPanel = new JPanel(new BorderLayout(20, 0));
+        JPanel centerPanel = new JPanel(new BorderLayout(10, 0));
         centerPanel.setBackground(Color.BLACK);
         centerPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
 
@@ -88,7 +110,7 @@ public class GUIMain extends JFrame {
         centerPanel.add(titleLabel, BorderLayout.NORTH);
 
         // 4개 영화카드가 들어가는 패널
-        movieDisplayPanel = new JPanel(new GridLayout(1, moviesPerPage, 20, 0));
+        movieDisplayPanel = new JPanel(new GridLayout(2, 4, 10, 10));
         movieDisplayPanel.setBackground(Color.BLACK);
         centerPanel.add(movieDisplayPanel, BorderLayout.CENTER);
 
@@ -136,7 +158,7 @@ public class GUIMain extends JFrame {
         movieDisplayPanel.removeAll(); // 패널 페이지 갱신을 위해 초기화
 
         int startIndex = currentPage * moviesPerPage;
-        int endIndex = Math.min(startIndex + moviesPerPage, movieList.size());
+        int endIndex = Math.min(startIndex + moviesPerPage, movieList.size()); // 마지막 페이지에서 남는 영화 처리
 
         for (int i = startIndex; i < endIndex; i++) {
             Movie movie = movieList.get(i);
@@ -144,7 +166,7 @@ public class GUIMain extends JFrame {
             movieDisplayPanel.add(movieCard);
         }
 
-        // 4개가 안될 경우 빈 패널로 채워 레이아웃 유지
+        // moviesPerPage개가 안될 경우 빈 패널로 채워 레이아웃 유지
         int emptySlots = moviesPerPage - (endIndex - startIndex);
         for (int i = 0; i < emptySlots; i++) {
             JPanel emptyPanel = new JPanel();
@@ -157,23 +179,25 @@ public class GUIMain extends JFrame {
     }
 
     private JPanel createMovieCard(Movie movie) {
-        JPanel cardPanel = new JPanel(new BorderLayout(0, 15));
+        JPanel cardPanel = new JPanel(new BorderLayout(0, 10));
         cardPanel.setBackground(Color.BLACK);
 
         JLabel posterLabel = new JLabel();
+        posterLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        posterLabel.setPreferredSize(new Dimension(147, 210));
         try {
             ImageIcon originalIcon = new ImageIcon("resources/movie_images/"+movie.getPosterUrl());
             if(originalIcon.getIconWidth() == -1) {
                 throw new Exception("Image not found");
             }
-            //210x298 A7 비율로 사이즈 조정
-            Image resizedImage = originalIcon.getImage().getScaledInstance(210, 298, Image.SCALE_SMOOTH);
+            //140x210 A8비율로 사이즈 조정
+            Image resizedImage = originalIcon.getImage().getScaledInstance(147, 210, Image.SCALE_SMOOTH);
             posterLabel.setIcon(new ImageIcon(resizedImage));
         } catch (Exception e) {
             posterLabel.setText(movie.getMovieTitle() + " (이미지 로드 실패)");
             posterLabel.setForeground(Color.WHITE);
-            posterLabel.setPreferredSize(new Dimension(298, 420));
         }
+
         cardPanel.add(posterLabel, BorderLayout.CENTER);
 
         JButton bookButton = new JButton("예매하기");
