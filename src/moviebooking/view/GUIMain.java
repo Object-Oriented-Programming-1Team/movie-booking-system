@@ -9,6 +9,9 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GUIMain extends JFrame {
@@ -16,7 +19,8 @@ public class GUIMain extends JFrame {
     private final ScreenManager screenManager;
     private final ScreeningManager screeningManager;
 
-    private final List<Movie> movieList;
+    private final List<Movie> allMovies;
+    private List<Movie> selectedMovies;
     private final String englishFont = "Bernard MT Condensed";
     private int currentPage = 0;
     private static final int moviesPerPage = 4;
@@ -27,7 +31,9 @@ public class GUIMain extends JFrame {
         this.movieManager = movieManager;
         this.screenManager = screenManager;
         this.screeningManager = screeningManager;
-        this.movieList = this.movieManager.findAll();
+        this.allMovies = this.movieManager.findAll();
+        this.selectedMovies = new ArrayList<>(this.allMovies);
+
 
         setTitle("Movie Booking System");
         setSize(1280, 720); //16:9 비율
@@ -41,7 +47,6 @@ public class GUIMain extends JFrame {
         add(createBottomPanel(), BorderLayout.SOUTH);
 
         updateMovieDisplay();
-
         setVisible(true);
     }
 
@@ -59,6 +64,22 @@ public class GUIMain extends JFrame {
         searchField.setBackground(Color.BLACK);
         searchField.setForeground(Color.WHITE);
         searchField.setBorder(new LineBorder(Color.WHITE, 1));
+
+        searchField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                String keyword = searchField.getText().trim();
+
+                if(keyword.isEmpty()){
+                    selectedMovies = new ArrayList<>(allMovies);
+                } else{
+                    selectedMovies = movieManager.searchMoviesByTitle(keyword);
+                }
+
+                currentPage = 0;
+                updateMovieDisplay();
+            }
+        });
         topPanel.add(searchField, BorderLayout.CENTER);
 
         JButton checkReservationsField = new JButton("예매 조회하기");
@@ -109,7 +130,7 @@ public class GUIMain extends JFrame {
         nextButton.setBackground(Color.BLACK);
         nextButton.setForeground(Color.GRAY);
         nextButton.addActionListener(e -> {
-            if ((currentPage + 1) * moviesPerPage < movieList.size()) {
+            if ((currentPage + 1) * moviesPerPage < selectedMovies.size()) {
                 currentPage++;
                 updateMovieDisplay();
             }
@@ -136,10 +157,10 @@ public class GUIMain extends JFrame {
         movieDisplayPanel.removeAll(); // 패널 페이지 갱신을 위해 초기화
 
         int startIndex = currentPage * moviesPerPage;
-        int endIndex = Math.min(startIndex + moviesPerPage, movieList.size());
+        int endIndex = Math.min(startIndex + moviesPerPage, selectedMovies.size());
 
         for (int i = startIndex; i < endIndex; i++) {
-            Movie movie = movieList.get(i);
+            Movie movie = selectedMovies.get(i);
             JPanel movieCard = createMovieCard(movie); // 영화 카드 생성
             movieDisplayPanel.add(movieCard);
         }
@@ -162,9 +183,14 @@ public class GUIMain extends JFrame {
 
         JLabel posterLabel = new JLabel();
         try {
-            ImageIcon originalIcon = new ImageIcon("resources/movie_images/"+movie.getPosterUrl());
-            if(originalIcon.getIconWidth() == -1) {
-                throw new Exception("Image not found");
+            String imagePath = "movie_images/" + movie.getPosterUrl();
+            java.net.URL imageUrl = getClass().getClassLoader().getResource(imagePath);
+
+            ImageIcon originalIcon;
+            if (imageUrl != null) {
+                originalIcon = new ImageIcon(imageUrl);
+            } else {
+                throw new Exception("Image not found: " + imagePath);
             }
             //210x298 A7 비율로 사이즈 조정
             Image resizedImage = originalIcon.getImage().getScaledInstance(210, 298, Image.SCALE_SMOOTH);
