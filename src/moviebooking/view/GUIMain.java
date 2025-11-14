@@ -16,6 +16,9 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+
 public class GUIMain extends JFrame {
     private final MovieManager movieManager;
     private final ScreenManager screenManager;
@@ -62,17 +65,38 @@ public class GUIMain extends JFrame {
         logoLabel.setFont(new Font(englishFont, Font.BOLD, 30));
         topPanel.add(logoLabel, BorderLayout.WEST);
 
-        JTextField searchField = new JTextField(" search");
+        final String placeholder = " search";
+        JTextField searchField = new JTextField(placeholder);
         searchField.setBackground(Color.BLACK);
-        searchField.setForeground(Color.WHITE);
+        searchField.setForeground(Color.LIGHT_GRAY);
         searchField.setBorder(new LineBorder(Color.WHITE, 1));
+
+        //마우스 클릭하면 "검색" 텍스트 삭제
+        searchField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if(searchField.getText().equals(placeholder)) {
+                    searchField.setText("");
+                    searchField.setForeground(Color.WHITE);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if(searchField.getText().isEmpty()) {
+                    searchField.setForeground(Color.GRAY);
+                    searchField.setText(placeholder);
+                }
+            }
+        });
+
 
         searchField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
                 String keyword = searchField.getText().trim();
 
-                if(keyword.isEmpty()){
+                if(keyword.isEmpty() || keyword.equals(placeholder)) {
                     selectedMovies = new ArrayList<>(allMovies);
                 } else{
                     try {
