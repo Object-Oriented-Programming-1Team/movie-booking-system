@@ -18,9 +18,9 @@ public class ScreeningManager extends BaseManager<Screening, String> {
     ScreeningFactory screeningFactory;
 
     public ScreeningManager(ScreeningFactory screeningFactory,MovieManager movieManager,ScreenManager screenManager){
-        this.movieManager=new MovieManager();
-        this.screenManager=new ScreenManager();
-        this.screeningFactory=new ScreeningFactory();
+        this.movieManager= movieManager;
+        this.screenManager= screenManager;
+        this.screeningFactory= screeningFactory;
     }
 
     @Override
