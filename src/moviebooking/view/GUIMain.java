@@ -10,16 +10,16 @@ import javax.swing.border.LineBorder;
 
 import java.awt.*;
 import java.util.List;
+import java.util.concurrent.Flow;
 
-public class GUIMain extends JFrame {
+public class GUIMain extends BaseFrame {
     private final MovieManager movieManager;
     private final ScreenManager screenManager;
     private final ScreeningManager screeningManager;
 
     private final List<Movie> movieList;
-    private final String englishFont = "Bernard MT Condensed";
     private int currentPage = 0;
-    private static final int moviesPerPage = 8;
+    private static final int moviesPerPage = 4;
 
     private JPanel movieDisplayPanel;
 
@@ -50,19 +50,11 @@ public class GUIMain extends JFrame {
         topPanel.setBackground(Color.BLACK);
         topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 
-        //Logo 자리
-        /* 
         JLabel logoLabel = new JLabel("Logo");
         logoLabel.setForeground(Color.WHITE);
         logoLabel.setFont(new Font(englishFont, Font.BOLD, 30));
         topPanel.add(logoLabel, BorderLayout.WEST);
-        */
-
-        JPanel emptyPanel = new JPanel();
-        emptyPanel.setBackground(Color.BLACK);
-        emptyPanel.setPreferredSize(new Dimension(150, 0));
-        topPanel.add(emptyPanel, BorderLayout.WEST);
-
+        
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         searchPanel.setBackground(Color.BLACK);
         searchPanel.setForeground(Color.WHITE);
@@ -70,7 +62,7 @@ public class GUIMain extends JFrame {
         JLabel searchLabel = new JLabel("검색");
         searchLabel.setBackground(Color.BLACK);
         searchLabel.setForeground(Color.WHITE);
-        searchLabel.setFont(new Font("맑은 고딕", Font.BOLD, 20));
+        searchLabel.setFont(new Font(koreanFont, Font.BOLD, 20));
 
         JTextField searchField = new JTextField();
         searchField.setBackground(Color.BLACK);
@@ -84,13 +76,13 @@ public class GUIMain extends JFrame {
         topPanel.add(searchPanel, BorderLayout.CENTER);
 
         JButton checkReservationsField = new JButton("예매 조회하기");
-        checkReservationsField.setBackground(Color.RED);
+        checkReservationsField.setBackground(redColorRGB);
         checkReservationsField.setForeground(Color.WHITE);
-        checkReservationsField.setFont(new Font("맑은 고딕", Font.BOLD, 20));
+        checkReservationsField.setFont(new Font(koreanFont, Font.BOLD, 20));
         checkReservationsField.addActionListener(e -> {
             // TODO: CheckReservations 클래스 구현 필요
             // 윈도우 창 새로 띄울지, 그냥 화면 자체를 넘길지 고민 필요
-            CheckReservations checkReservationsFrame = new CheckReservations();
+            CheckBooksFrame checkReservationsFrame = new CheckBooksFrame();
             checkReservationsFrame.setVisible(true);
         });
         topPanel.add(checkReservationsField, BorderLayout.EAST);
@@ -103,19 +95,54 @@ public class GUIMain extends JFrame {
         centerPanel.setBackground(Color.BLACK);
         centerPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
 
+        JPanel topPanelOnCenter = new JPanel();
+        topPanelOnCenter.setLayout(new BoxLayout(topPanelOnCenter, BoxLayout.Y_AXIS));
+        topPanelOnCenter.setBackground(Color.BLACK);
+
+        JPanel titlePanel = new JPanel();
+        titlePanel.setBackground(Color.BLACK);
         JLabel titleLabel = new JLabel("Movies");
-        titleLabel.setForeground(Color.RED);
-        titleLabel.setFont(new Font(englishFont, Font.BOLD, 70));
+        titleLabel.setForeground(redColorRGB);
+        titleLabel.setFont(new Font(englishFont, Font.BOLD, 90));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        centerPanel.add(titleLabel, BorderLayout.NORTH);
+        titlePanel.add(titleLabel);
+
+        JPanel nowShowingAndButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 200, 0));
+        nowShowingAndButtonPanel.setBackground(Color.BLACK);
+
+        JLabel nowShowingLabel = new JLabel("Now Showing");
+        nowShowingLabel.setForeground(Color.WHITE);
+        nowShowingLabel.setFont(new Font(englishFont, Font.BOLD, 50));
+        nowShowingLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        nowShowingAndButtonPanel.add(nowShowingLabel,BorderLayout.WEST);
+
+        JPanel emptyPanel = new JPanel();
+        emptyPanel.setBackground(Color.BLACK);
+        emptyPanel.setPreferredSize(new Dimension(200,0));
+        nowShowingAndButtonPanel.add(emptyPanel,BorderLayout.CENTER);
+
+        JButton showAllButton = new JButton("전체보기");
+        showAllButton.setBackground(Color.WHITE);
+        showAllButton.setForeground(Color.BLACK);
+        showAllButton.setFont(new Font(koreanFont, Font.PLAIN, 20));
+        showAllButton.addActionListener(e -> {
+            ShowAllMoviesFrame showAllMoviesFrame = new ShowAllMoviesFrame(movieManager, screenManager, screeningManager);
+            showAllMoviesFrame.setVisible(true);
+        });
+        nowShowingAndButtonPanel.add(showAllButton,BorderLayout.EAST);
+        
+        topPanelOnCenter.add(titlePanel);
+        topPanelOnCenter.add(nowShowingAndButtonPanel);
+        
+        centerPanel.add(topPanelOnCenter, BorderLayout.NORTH);
 
         // 4개 영화카드가 들어가는 패널
-        movieDisplayPanel = new JPanel(new GridLayout(2, 4, 10, 10));
+        movieDisplayPanel = new JPanel(new GridLayout(1, 4, 20, 10));
         movieDisplayPanel.setBackground(Color.BLACK);
         centerPanel.add(movieDisplayPanel, BorderLayout.CENTER);
 
         JButton prevButton = new JButton("◀");
-        prevButton.setFont(new Font("맑은 고딕", Font.BOLD, 50));
+        prevButton.setFont(new Font(koreanFont, Font.BOLD, 30));
         prevButton.setBackground(Color.BLACK);
         prevButton.setForeground(Color.GRAY);
         prevButton.addActionListener(e -> {
@@ -127,7 +154,7 @@ public class GUIMain extends JFrame {
         centerPanel.add(prevButton, BorderLayout.WEST);
 
         JButton nextButton = new JButton("▶");
-        nextButton.setFont(new Font("맑은 고딕", Font.BOLD, 50));
+        nextButton.setFont(new Font(koreanFont, Font.BOLD, 30));
         nextButton.setBackground(Color.BLACK);
         nextButton.setForeground(Color.GRAY);
         nextButton.addActionListener(e -> {
@@ -147,8 +174,8 @@ public class GUIMain extends JFrame {
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 30));
 
         JButton getTicketButton = new JButton("GET TICKET");
-        getTicketButton.setBackground(new Color(30, 52, 92));
-        getTicketButton.setForeground(Color.RED);
+        getTicketButton.setBackground(darkBlueColorRGB);
+        getTicketButton.setForeground(redColorRGB);
         getTicketButton.setFont(new Font(englishFont, Font.PLAIN, 25));
         bottomPanel.add(getTicketButton);
         return bottomPanel;
@@ -184,14 +211,15 @@ public class GUIMain extends JFrame {
 
         JLabel posterLabel = new JLabel();
         posterLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        posterLabel.setPreferredSize(new Dimension(147, 210));
+        posterLabel.setPreferredSize(new Dimension(210, 298));
         try {
             ImageIcon originalIcon = new ImageIcon("resources/movie_images/"+movie.getPosterUrl());
             if(originalIcon.getIconWidth() == -1) {
                 throw new Exception("Image not found");
             }
-            //140x210 A8비율로 사이즈 조정
-            Image resizedImage = originalIcon.getImage().getScaledInstance(147, 210, Image.SCALE_SMOOTH);
+            //147x210 A8비율로 사이즈 조정
+            //210x298 A6비율로 사이즈 조정
+            Image resizedImage = originalIcon.getImage().getScaledInstance(210, 298, Image.SCALE_SMOOTH);
             posterLabel.setIcon(new ImageIcon(resizedImage));
         } catch (Exception e) {
             posterLabel.setText(movie.getMovieTitle() + " (이미지 로드 실패)");
@@ -201,17 +229,12 @@ public class GUIMain extends JFrame {
         cardPanel.add(posterLabel, BorderLayout.CENTER);
 
         JButton bookButton = new JButton("예매하기");
-        bookButton.setBackground(Color.RED);
+        bookButton.setBackground(redColorRGB);
         bookButton.setForeground(Color.WHITE);
-        bookButton.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+        bookButton.setFont(new Font(koreanFont, Font.BOLD, 14));
         bookButton.addActionListener(e -> {
-            this.setVisible(false);
-
-            // TODO: 영화에 대한 정보들을 표시하는 page2 구현
-            // 모든 매니저 객체와 선택한 Movie 객체를 모두 인자로 전달해야함
-            
-            // new TimeSelect(this, movieManager, screenManager, screeningManager, movie);
-            
+            BookMovieFrame bookMovie = new BookMovieFrame(this, movieManager, screenManager, screeningManager, movie);
+            bookMovie.setVisible(true);
         });
         cardPanel.add(bookButton, BorderLayout.SOUTH);
 
