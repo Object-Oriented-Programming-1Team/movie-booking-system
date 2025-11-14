@@ -4,10 +4,7 @@ import moviebooking.common.Manageable;
 import moviebooking.model.Movie;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.*;
 
 public class MovieManager extends BaseManager<Movie, String> {
 
@@ -59,6 +56,23 @@ public class MovieManager extends BaseManager<Movie, String> {
                 results.add(movie);
             }
         }
+        return results;
+    }
+
+    public List<Movie> searchMoviesByTitleOrGenre(String keyword) {
+        ArrayList<Movie> results = new ArrayList<>();
+        String lowerKeyword = keyword.toLowerCase().trim();
+
+        for (Movie movie : list){
+            String movieTitle = movie.getMovieTitle().toLowerCase();
+            String genre = movie.getGenre().toLowerCase();
+
+            if (movieTitle.contains(lowerKeyword) || genre.contains(genre)) {
+                results.add(movie);
+            }
+
+        }
+
         return results;
     }
 

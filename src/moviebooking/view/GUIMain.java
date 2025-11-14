@@ -11,6 +11,8 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +75,15 @@ public class GUIMain extends JFrame {
                 if(keyword.isEmpty()){
                     selectedMovies = new ArrayList<>(allMovies);
                 } else{
-                    selectedMovies = movieManager.searchMoviesByTitle(keyword);
+                    try {
+                        // (1) 날짜로 파싱 시도 (예: 2025-11-15)
+                        LocalDate date = LocalDate.parse(keyword);
+                        // (2) 날짜 파싱 성공 시: ScreeningManager 호출
+                        selectedMovies = screeningManager.findMoviesByDate(date);
+                    } catch (DateTimeParseException ex) {
+                        // (3) 날짜 파싱 실패 시: MovieManager (제목/장르) 호출
+                        selectedMovies = movieManager.searchMoviesByTitleOrGenre(keyword);
+                    }
                 }
 
                 currentPage = 0;
