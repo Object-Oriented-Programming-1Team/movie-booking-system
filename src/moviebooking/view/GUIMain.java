@@ -15,11 +15,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.concurrent.Flow;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
-public class GUIMain extends JFrame {
+public class GUIMain extends BaseFrame {
     private final MovieManager movieManager;
     private final ScreenManager screenManager;
     private final ScreeningManager screeningManager;
@@ -65,6 +65,10 @@ public class GUIMain extends JFrame {
         logoLabel.setFont(new Font(englishFont, Font.BOLD, 30));
         topPanel.add(logoLabel, BorderLayout.WEST);
 
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        searchPanel.setBackground(Color.BLACK);
+        searchPanel.setForeground(Color.WHITE);
+
         final String placeholder = " search";
         JTextField searchField = new JTextField(placeholder);
         searchField.setBackground(Color.BLACK);
@@ -90,6 +94,8 @@ public class GUIMain extends JFrame {
             }
         });
 
+        searchPanel.add(searchLabel);
+        searchPanel.add(searchField);
 
         searchField.addActionListener(new ActionListener() {
             @Override
@@ -136,6 +142,12 @@ public class GUIMain extends JFrame {
         centerPanel.setBackground(Color.BLACK);
         centerPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
 
+        JPanel topPanelOnCenter = new JPanel();
+        topPanelOnCenter.setLayout(new BoxLayout(topPanelOnCenter, BoxLayout.Y_AXIS));
+        topPanelOnCenter.setBackground(Color.BLACK);
+
+        JPanel titlePanel = new JPanel();
+        titlePanel.setBackground(Color.BLACK);
         JLabel titleLabel = new JLabel("Movies");
         titleLabel.setForeground(Color.RED);
         titleLabel.setFont(new Font(englishFont, Font.BOLD, 70));
@@ -144,11 +156,13 @@ public class GUIMain extends JFrame {
 
         // 4개 영화카드가 들어가는 패널
         movieDisplayPanel = new JPanel(new GridLayout(1, moviesPerPage, 20, 0));
+        movieDisplayPanel = new JPanel(new GridLayout(1, 4, 20, 10));
         movieDisplayPanel.setBackground(Color.BLACK);
         centerPanel.add(movieDisplayPanel, BorderLayout.CENTER);
 
         JButton prevButton = new JButton("◀");
         prevButton.setFont(new Font("맑은 고딕", Font.BOLD, 50));
+        prevButton.setFont(new Font(koreanFont, Font.BOLD, 30));
         prevButton.setBackground(Color.BLACK);
         prevButton.setForeground(Color.GRAY);
         prevButton.addActionListener(e -> {
@@ -161,10 +175,12 @@ public class GUIMain extends JFrame {
 
         JButton nextButton = new JButton("▶");
         nextButton.setFont(new Font("맑은 고딕", Font.BOLD, 50));
+        nextButton.setFont(new Font(koreanFont, Font.BOLD, 30));
         nextButton.setBackground(Color.BLACK);
         nextButton.setForeground(Color.GRAY);
         nextButton.addActionListener(e -> {
             if ((currentPage + 1) * moviesPerPage < selectedMovies.size()) {
+            if ((currentPage + 1) * moviesPerPage < movieList.size()) {
                 currentPage++;
                 updateMovieDisplay();
             }
@@ -180,8 +196,6 @@ public class GUIMain extends JFrame {
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 30));
 
         JButton getTicketButton = new JButton("GET TICKET");
-        getTicketButton.setBackground(new Color(30, 52, 92));
-        getTicketButton.setForeground(Color.RED);
         getTicketButton.setFont(new Font(englishFont, Font.PLAIN, 25));
         bottomPanel.add(getTicketButton);
         return bottomPanel;
@@ -191,15 +205,12 @@ public class GUIMain extends JFrame {
         movieDisplayPanel.removeAll(); // 패널 페이지 갱신을 위해 초기화
 
         int startIndex = currentPage * moviesPerPage;
-        int endIndex = Math.min(startIndex + moviesPerPage, selectedMovies.size());
 
         for (int i = startIndex; i < endIndex; i++) {
-            Movie movie = selectedMovies.get(i);
             JPanel movieCard = createMovieCard(movie); // 영화 카드 생성
             movieDisplayPanel.add(movieCard);
         }
 
-        // 4개가 안될 경우 빈 패널로 채워 레이아웃 유지
         int emptySlots = moviesPerPage - (endIndex - startIndex);
         for (int i = 0; i < emptySlots; i++) {
             JPanel emptyPanel = new JPanel();
@@ -216,6 +227,8 @@ public class GUIMain extends JFrame {
         cardPanel.setBackground(Color.BLACK);
 
         JLabel posterLabel = new JLabel();
+        posterLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        posterLabel.setPreferredSize(new Dimension(210, 298));
         try {
             String imagePath = "movie_images/" + movie.getPosterUrl();
             java.net.URL imageUrl = getClass().getClassLoader().getResource(imagePath);
@@ -245,9 +258,9 @@ public class GUIMain extends JFrame {
 
             // TODO: 영화에 대한 정보들을 표시하는 page2 구현
             // 모든 매니저 객체와 선택한 Movie 객체를 모두 인자로 전달해야함
-            
+
             // new TimeSelect(this, movieManager, screenManager, screeningManager, movie);
-            
+
         });
         cardPanel.add(bookButton, BorderLayout.SOUTH);
 
