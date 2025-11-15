@@ -22,7 +22,6 @@ public class ScreenManager extends BaseManager<Screen, String> {
         return null;
     }
 
-    //TODO 3 Screen readItem method
     @Override
     protected Screen readItem(Scanner scan) {
         try{
