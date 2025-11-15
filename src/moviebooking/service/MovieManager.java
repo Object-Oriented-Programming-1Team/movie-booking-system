@@ -67,7 +67,7 @@ public class MovieManager extends BaseManager<Movie, String> {
             String movieTitle = movie.getMovieTitle().toLowerCase();
             String genre = movie.getGenre().toLowerCase();
 
-            if (movieTitle.contains(lowerKeyword) || genre.contains(genre)) {
+            if (movieTitle.contains(lowerKeyword) || genre.contains(lowerKeyword)) {
                 results.add(movie);
             }
 
