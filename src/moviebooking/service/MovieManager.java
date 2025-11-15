@@ -14,7 +14,7 @@ public class MovieManager extends BaseManager<Movie, String> {
     @Override
     public Movie findById(String id) {
         for (Movie movie : list) {
-            if(movie.getMovieTitle().equals(id)) {
+            if(movie.getMovieId().equals(id)) {
                 return movie;
             }
         }
