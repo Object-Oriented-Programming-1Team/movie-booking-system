@@ -11,17 +11,12 @@ public class CheckReservationsPanel extends JPanel {
 
     public CheckReservationsPanel(MainController mainController) {
         this.mainController = mainController;
-
-        // 3. JFrame 관련 코드 삭제
-
-        // 4. 패널 설정
         setBackground(Color.BLACK);
 
         JLabel titleLabel = new JLabel("예매 조회 화면");
         titleLabel.setForeground(Color.WHITE);
         add(titleLabel);
 
-        // 5. '뒤로 가기' 버튼 추가
         JButton backButton = new JButton("뒤로 가기");
         backButton.addActionListener(e -> {
             mainController.showMovieListView();

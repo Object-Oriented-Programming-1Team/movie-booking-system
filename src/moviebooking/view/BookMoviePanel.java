@@ -113,6 +113,12 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
         backButton.setBackground(Color.BLACK);
         backButton.setForeground(Color.GRAY);
         backButton.setFont(new Font(KOREAN_FONT, Font.BOLD, 50));
+
+        // ✅ 1. macOS 버그 수정을 위해 Opaque(불투명) 설정
+        backButton.setOpaque(true);
+        // ✅ 2. 테두리를 없애서 색상이 꽉 차게 함
+        backButton.setBorderPainted(false);
+
         backButton.addActionListener(e -> {
             // "뒤로 가기"는 Controller에게 요청
             mainController.showMovieListView();
@@ -207,6 +213,4 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
         bottomPanel.add(bookButton);
         return bottomPanel;
     }
-
-    // (createPosterPanel, createInformationPanel 메소드는 createCenterPanel로 통합되었으므로 삭제)
 }

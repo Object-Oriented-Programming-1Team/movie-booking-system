@@ -111,6 +111,12 @@ public class MovieListPanel extends JPanel implements GuiConstants {
         checkReservationsField.setBackground(RED_COLOR);
         checkReservationsField.setForeground(Color.WHITE);
         checkReservationsField.setFont(new Font(KOREAN_FONT, Font.BOLD, 20));
+
+        // ✅ 1. macOS 버그 수정을 위해 Opaque(불투명) 설정
+        checkReservationsField.setOpaque(true);
+        // ✅ 2. 테두리를 없애서 색상이 꽉 차게 함
+        checkReservationsField.setBorderPainted(false);
+
         checkReservationsField.addActionListener(e -> {
             mainController.showCheckReservationsView();
         });
@@ -148,6 +154,12 @@ public class MovieListPanel extends JPanel implements GuiConstants {
         prevButton.setFont(new Font(KOREAN_FONT, Font.BOLD, 50));
         prevButton.setBackground(Color.BLACK);
         prevButton.setForeground(Color.GRAY);
+
+        // ✅ 1. macOS 버그 수정을 위해 Opaque(불투명) 설정
+        prevButton.setOpaque(true);
+        // ✅ 2. 테두리를 없애서 색상이 꽉 차게 함
+        prevButton.setBorderPainted(false);
+
         prevButton.addActionListener(e -> {
             if (currentPage > 0) {
                 currentPage--;
@@ -160,6 +172,12 @@ public class MovieListPanel extends JPanel implements GuiConstants {
         nextButton.setFont(new Font(KOREAN_FONT, Font.BOLD, 50));
         nextButton.setBackground(Color.BLACK);
         nextButton.setForeground(Color.GRAY);
+
+        // ✅ 1. macOS 버그 수정을 위해 Opaque(불투명) 설정
+        nextButton.setOpaque(true);
+        // ✅ 2. 테두리를 없애서 색상이 꽉 차게 함
+        nextButton.setBorderPainted(false);
+
         nextButton.addActionListener(e -> {
             if ((currentPage + 1) * moviesPerPage < selectedMovies.size()) {
                 currentPage++;
@@ -238,6 +256,12 @@ public class MovieListPanel extends JPanel implements GuiConstants {
         bookButton.setBackground(RED_COLOR);
         bookButton.setForeground(Color.WHITE);
         bookButton.setFont(new Font(KOREAN_FONT, Font.BOLD, 14));
+
+        // ✅ 1. macOS 버그 수정을 위해 Opaque(불투명) 설정
+        bookButton.setOpaque(true);
+        // ✅ 2. 테두리를 없애서 색상이 꽉 차게 함
+        bookButton.setBorderPainted(false);
+
         bookButton.addActionListener(e -> {
             mainController.showBookMovieView(movie);
         });
