@@ -83,4 +83,12 @@ public class ScreeningManager extends BaseManager<Screening, String> {
         // Set을 다시 List로 변환하여 반환
         return new ArrayList<>(moviesOnDate);
     }
+
+    public Screening findScreeningsByMovieId(String movieId){
+        for (Screening screening : list) {
+            if(screening.getMovie().getMovieId().equals(movieId))
+                return screening;
+        }
+        return null;
+    }
 }
