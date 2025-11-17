@@ -3,6 +3,7 @@ package moviebooking.service;
 import moviebooking.common.Manageable;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -55,8 +56,15 @@ public abstract class BaseManager<T, ID> implements Manageable<T, ID> {
 
     private Scanner openFile(String filename) {
         Scanner filein = null;
+
+        // 'ClassLoader'를 통해 'resources' 폴더 내부의 파일에 접근해야 한다.
         try {
-            filein = new Scanner(new File("resources/" + filename));
+            URL url = getClass().getClassLoader().getResource(filename);
+            if (url == null){
+                System.out.println(filename + " : 파일 찾을 수 없습니다");
+                return null;
+            }
+            filein = new Scanner(new File(url.toURI()));
         } catch (Exception e) {
             System.out.println(filename + ": 파일 열기 실패 - " + e.getMessage());
         }

@@ -6,11 +6,9 @@ import moviebooking.model.Screen;
 import moviebooking.model.Screening;
 import moviebooking.model.Seat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.*;
 
 public class ScreeningManager extends BaseManager<Screening, String> {
     MovieManager movieManager;
@@ -70,5 +68,19 @@ public class ScreeningManager extends BaseManager<Screening, String> {
             System.out.println("[ERROR] ScreeningManager: 기타 오류: " + e.getMessage());
             return null;
         }
+    }
+
+    public List<Movie> findMoviesByDate(LocalDate date){
+        // Set을 사용해 중복된 영화를 자동으로 제거
+        java.util.Set<Movie> moviesOnDate = new java.util.HashSet<>();
+
+        for (Screening screening : list) {
+            // Screening의 startTime(LocalDateTime)을 LocalDate로 변환하여 비교
+            if (screening.getStartTime().toLocalDate().isEqual(date)) {
+                moviesOnDate.add(screening.getMovie());
+            }
+        }
+        // Set을 다시 List로 변환하여 반환
+        return new ArrayList<>(moviesOnDate);
     }
 }
