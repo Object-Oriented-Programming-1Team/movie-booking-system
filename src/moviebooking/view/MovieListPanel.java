@@ -1,5 +1,7 @@
 package moviebooking.view;
 
+import moviebooking.common.GuiConstants;
+import moviebooking.controller.MainController;
 import moviebooking.model.Movie;
 import moviebooking.service.MovieManager;
 import moviebooking.service.ScreenManager;
@@ -18,10 +20,11 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GUIMain extends BaseFrame {
+public class MovieListPanel extends JPanel implements GuiConstants {
     private final MovieManager movieManager;
     private final ScreenManager screenManager;
     private final ScreeningManager screeningManager;
+    private final MainController mainController;
 
     private final List<Movie> allMovies;
     private List<Movie> selectedMovies;
@@ -30,18 +33,15 @@ public class GUIMain extends BaseFrame {
 
     private JPanel movieDisplayPanel;
 
-    public GUIMain(MovieManager movieManager, ScreenManager screenManager, ScreeningManager screeningManager) {
+    public MovieListPanel(MovieManager movieManager, ScreenManager screenManager, ScreeningManager screeningManager, MainController mainController) {
         this.movieManager = movieManager;
         this.screenManager = screenManager;
         this.screeningManager = screeningManager;
         this.allMovies = this.movieManager.findAll();
         this.selectedMovies = new ArrayList<>(this.allMovies);
+        this.mainController = mainController;
 
-        setTitle("Movie Booking System");
-        setSize(1280, 720);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        getContentPane().setBackground(Color.BLACK);
+        setBackground(Color.BLACK);
         setLayout(new BorderLayout(0, 20));
 
         add(createTopPanel(), BorderLayout.NORTH);
@@ -49,7 +49,6 @@ public class GUIMain extends BaseFrame {
         add(createBottomPanel(), BorderLayout.SOUTH);
 
         updateMovieDisplay();
-        setVisible(true);
     }
 
     private JPanel createTopPanel() {
@@ -59,7 +58,7 @@ public class GUIMain extends BaseFrame {
 
         JLabel logoLabel = new JLabel("Logo");
         logoLabel.setForeground(Color.WHITE);
-        logoLabel.setFont(new Font(englishFont, Font.BOLD, 30));
+        logoLabel.setFont(new Font(ENGLISH_FONT, Font.BOLD, 30));
         topPanel.add(logoLabel, BorderLayout.WEST);
 
         final String placeholder = " search title, genre, or date (YYYY-MM-DD)";
@@ -109,12 +108,11 @@ public class GUIMain extends BaseFrame {
         topPanel.add(searchField, BorderLayout.CENTER);
 
         JButton checkReservationsField = new JButton("예매 조회하기");
-        checkReservationsField.setBackground(redColorRGB);
+        checkReservationsField.setBackground(RED_COLOR);
         checkReservationsField.setForeground(Color.WHITE);
-        checkReservationsField.setFont(new Font(koreanFont, Font.BOLD, 20));
+        checkReservationsField.setFont(new Font(KOREAN_FONT, Font.BOLD, 20));
         checkReservationsField.addActionListener(e -> {
-            CheckReservations checkReservationsFrame = new CheckReservations();
-            checkReservationsFrame.setVisible(true);
+            mainController.showCheckReservationsView();
         });
         topPanel.add(checkReservationsField, BorderLayout.EAST);
 
@@ -133,8 +131,8 @@ public class GUIMain extends BaseFrame {
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(Color.BLACK);
         JLabel titleLabel = new JLabel("Movies");
-        titleLabel.setForeground(redColorRGB);
-        titleLabel.setFont(new Font(englishFont, Font.BOLD, 70));
+        titleLabel.setForeground(RED_COLOR);
+        titleLabel.setFont(new Font(ENGLISH_FONT, Font.BOLD, 70));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titlePanel.add(titleLabel);
 
@@ -147,7 +145,7 @@ public class GUIMain extends BaseFrame {
         centerPanel.add(movieDisplayPanel, BorderLayout.CENTER);
 
         JButton prevButton = new JButton("◀");
-        prevButton.setFont(new Font(koreanFont, Font.BOLD, 50));
+        prevButton.setFont(new Font(KOREAN_FONT, Font.BOLD, 50));
         prevButton.setBackground(Color.BLACK);
         prevButton.setForeground(Color.GRAY);
         prevButton.addActionListener(e -> {
@@ -159,7 +157,7 @@ public class GUIMain extends BaseFrame {
         centerPanel.add(prevButton, BorderLayout.WEST);
 
         JButton nextButton = new JButton("▶");
-        nextButton.setFont(new Font(koreanFont, Font.BOLD, 50));
+        nextButton.setFont(new Font(KOREAN_FONT, Font.BOLD, 50));
         nextButton.setBackground(Color.BLACK);
         nextButton.setForeground(Color.GRAY);
         nextButton.addActionListener(e -> {
@@ -179,9 +177,9 @@ public class GUIMain extends BaseFrame {
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 30));
 
         JButton getTicketButton = new JButton("GET TICKET");
-        getTicketButton.setBackground(darkBlueColorRGB);
-        getTicketButton.setForeground(redColorRGB);
-        getTicketButton.setFont(new Font(englishFont, Font.PLAIN, 25));
+        getTicketButton.setBackground(DARK_BLUE_COLOR);
+        getTicketButton.setForeground(RED_COLOR);
+        getTicketButton.setFont(new Font(ENGLISH_FONT, Font.PLAIN, 25));
         bottomPanel.add(getTicketButton);
         return bottomPanel;
     }
@@ -237,13 +235,11 @@ public class GUIMain extends BaseFrame {
         cardPanel.add(posterLabel, BorderLayout.CENTER);
 
         JButton bookButton = new JButton("예매하기");
-        bookButton.setBackground(redColorRGB);
+        bookButton.setBackground(RED_COLOR);
         bookButton.setForeground(Color.WHITE);
-        bookButton.setFont(new Font(koreanFont, Font.BOLD, 14));
+        bookButton.setFont(new Font(KOREAN_FONT, Font.BOLD, 14));
         bookButton.addActionListener(e -> {
-
-            BookMovieFrame bookMovie = new BookMovieFrame(this, movieManager, screenManager, screeningManager, movie);
-            bookMovie.setVisible(true);
+            mainController.showBookMovieView(movie);
         });
         cardPanel.add(bookButton, BorderLayout.SOUTH);
 
