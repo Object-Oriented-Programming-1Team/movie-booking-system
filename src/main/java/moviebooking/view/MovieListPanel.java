@@ -1,11 +1,11 @@
-package moviebooking.view;
+package main.java.moviebooking.view;
 
-import moviebooking.common.GuiConstants;
-import moviebooking.controller.MainController;
-import moviebooking.model.Movie;
-import moviebooking.service.MovieManager;
-import moviebooking.service.ScreenManager;
-import moviebooking.service.ScreeningManager;
+import main.java.moviebooking.common.GuiConstants;
+import main.java.moviebooking.controller.MainController;
+import main.java.moviebooking.model.Movie;
+import main.java.moviebooking.service.MovieManager;
+import main.java.moviebooking.service.ScreenManager;
+import main.java.moviebooking.service.ScreeningManager;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -234,7 +234,7 @@ public class MovieListPanel extends JPanel implements GuiConstants {
         posterLabel.setPreferredSize(new Dimension(210, 298));
 
         try {
-            String imagePath = "movie_images/" + movie.getPosterUrl();
+            String imagePath = "main/java/resources/movie_images/" + movie.getPosterUrl();
             URL imageUrl = getClass().getClassLoader().getResource(imagePath);
 
             ImageIcon originalIcon;

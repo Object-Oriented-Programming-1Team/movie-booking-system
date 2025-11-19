@@ -1,4 +1,4 @@
-package moviebooking.view;
+package main.java.moviebooking.view;
 
 import javax.swing.*;
 import java.awt.*;

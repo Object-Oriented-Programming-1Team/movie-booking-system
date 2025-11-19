@@ -1,4 +1,4 @@
-package moviebooking.common;
+package main.java.moviebooking.common;
 
 import java.awt.*;
 

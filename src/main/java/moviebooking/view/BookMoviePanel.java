@@ -1,4 +1,4 @@
-package moviebooking.view;
+package main.java.moviebooking.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -9,14 +9,13 @@ import java.awt.Image;
 import java.net.URL;
 
 import javax.swing.*; // (필요한 import 추가)
-import javax.swing.border.Border; // (필요한 import 추가)
 
-import moviebooking.common.GuiConstants;
-import moviebooking.controller.MainController;
-import moviebooking.model.Movie;
-import moviebooking.service.MovieManager;
-import moviebooking.service.ScreenManager;
-import moviebooking.service.ScreeningManager;
+import main.java.moviebooking.common.GuiConstants;
+import main.java.moviebooking.controller.MainController;
+import main.java.moviebooking.model.Movie;
+import main.java.moviebooking.service.MovieManager;
+import main.java.moviebooking.service.ScreenManager;
+import main.java.moviebooking.service.ScreeningManager;
 
 public class BookMoviePanel extends JPanel implements GuiConstants {
     // Service & Controller
@@ -78,7 +77,7 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
 
         // 1. 포스터 라벨 갱신 (ClassLoader 사용)
         try{
-            String imagePath = "movie_images/" + movie.getPosterUrl();
+            String imagePath = "main/java/resources/movie_images/" + movie.getPosterUrl();
             URL imageUrl = getClass().getClassLoader().getResource(imagePath);
             ImageIcon originalIcon;
             if (imageUrl != null) {

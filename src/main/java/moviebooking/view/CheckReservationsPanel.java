@@ -1,6 +1,6 @@
-package moviebooking.view;
+package main.java.moviebooking.view;
 
-import moviebooking.controller.MainController;
+import main.java.moviebooking.controller.MainController;
 
 import javax.swing.*;
 import java.awt.*;
