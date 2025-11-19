@@ -1,6 +1,6 @@
-package moviebooking.service;
+package main.java.moviebooking.service;
 
-import moviebooking.common.Manageable;
+import main.java.moviebooking.common.Manageable;
 
 import java.io.File;
 import java.net.URL;

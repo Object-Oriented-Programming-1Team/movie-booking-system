@@ -1,8 +1,8 @@
-package moviebooking.controller;
+package main.java.moviebooking.controller;
 
-import moviebooking.model.Movie;
-import moviebooking.view.BookMoviePanel;
-import moviebooking.view.MainFrame;
+import main.java.moviebooking.model.Movie;
+import main.java.moviebooking.view.BookMoviePanel;
+import main.java.moviebooking.view.MainFrame;
 
 public class MainController {
 

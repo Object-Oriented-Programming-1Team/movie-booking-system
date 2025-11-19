@@ -1,11 +1,7 @@
-package moviebooking.service;
+package main.java.moviebooking.service;
 
-import moviebooking.common.Manageable;
-import moviebooking.model.Movie;
-import moviebooking.model.Screen;
-import moviebooking.model.Screening;
+import main.java.moviebooking.model.Screen;
 
-import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;

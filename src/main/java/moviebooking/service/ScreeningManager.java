@@ -1,10 +1,8 @@
-package moviebooking.service;
+package main.java.moviebooking.service;
 
-import moviebooking.common.Manageable;
-import moviebooking.model.Movie;
-import moviebooking.model.Screen;
-import moviebooking.model.Screening;
-import moviebooking.model.Seat;
+import main.java.moviebooking.model.Movie;
+import main.java.moviebooking.model.Screen;
+import main.java.moviebooking.model.Screening;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

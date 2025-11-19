@@ -1,10 +1,10 @@
-package moviebooking;
-import moviebooking.controller.MainController;
-import moviebooking.service.MovieManager;
-import moviebooking.service.ScreenManager;
-import moviebooking.service.ScreeningFactory;
-import moviebooking.service.ScreeningManager;
-import moviebooking.view.*;
+package main.java.moviebooking;
+import main.java.moviebooking.controller.MainController;
+import main.java.moviebooking.service.MovieManager;
+import main.java.moviebooking.service.ScreenManager;
+import main.java.moviebooking.service.ScreeningFactory;
+import main.java.moviebooking.service.ScreeningManager;
+import main.java.moviebooking.view.*;
 
 import javax.swing.SwingUtilities;
 
@@ -18,9 +18,9 @@ public class Main {
         ScreeningManager screeningManager = new ScreeningManager(screeningFactory, movieManager, screenManager);
 
         // 2. 데이터 로드 (동일)
-        movieManager.loadData("movies.txt");
-        screenManager.loadData("screens.txt");
-        screeningManager.loadData("screenings.txt");
+        movieManager.loadData("main/java/resources/movies.txt");
+        screenManager.loadData("main/java/resources/screens.txt");
+        screeningManager.loadData("main/java/resources/screenings.txt");
 
         // 3. GUI 조립
         SwingUtilities.invokeLater(() -> {

@@ -1,4 +1,4 @@
-package moviebooking.model;
+package main.java.moviebooking.model;
 
 public class Movie {
     private String movieId;

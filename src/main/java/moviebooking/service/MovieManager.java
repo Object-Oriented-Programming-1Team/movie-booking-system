@@ -1,9 +1,7 @@
-package moviebooking.service;
+package main.java.moviebooking.service;
 
-import moviebooking.common.Manageable;
-import moviebooking.model.Movie;
+import main.java.moviebooking.model.Movie;
 
-import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class MovieManager extends BaseManager<Movie, String> {
