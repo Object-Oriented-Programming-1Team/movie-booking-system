@@ -35,7 +35,7 @@ public class Main {
             MovieListPanel movieListPanel = new MovieListPanel(movieManager, screenManager, screeningManager,mainController);
             BookMoviePanel bookMoviePanel = new BookMoviePanel(mainController, movieManager, screenManager, screeningManager);
             CheckReservationsPanel checkReservationsPanel = new CheckReservationsPanel(mainController);
-            ShowAllMoviesPanel ShowAllMoviesPanel = new ShowAllMoviesPanel(mainController);
+            ShowAllMoviesPanel ShowAllMoviesPanel = new ShowAllMoviesPanel(mainController, movieManager);
 
             // 3.4. Controller가 Panel들을 알도록 주입 (필요시)
             mainController.setBookMoviePanel(bookMoviePanel);
