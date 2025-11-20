@@ -29,4 +29,8 @@ public class MainController {
     public void showCheckReservationsView(){
         mainFrame.showPanel("checkReservations");
     }
+
+    public void ShowAllMoviesView(){
+        mainFrame.showPanel("allMovies");
+    }
 }
