@@ -3,6 +3,7 @@ package main.java.moviebooking.view;
 import main.java.moviebooking.common.GuiConstants;
 import main.java.moviebooking.controller.MainController;
 import main.java.moviebooking.model.Movie;
+import main.java.moviebooking.model.Screening;
 import main.java.moviebooking.service.MovieManager;
 import main.java.moviebooking.service.ScreenManager;
 import main.java.moviebooking.service.ScreeningManager;
@@ -37,7 +38,7 @@ public class MovieListPanel extends JPanel implements GuiConstants {
         this.movieManager = movieManager;
         this.screenManager = screenManager;
         this.screeningManager = screeningManager;
-        this.allMovies = this.movieManager.findAll();
+        this.allMovies = this.screeningManager.getScreenedMovies();
         this.selectedMovies = new ArrayList<>(this.allMovies);
         this.mainController = mainController;
 
@@ -107,20 +108,20 @@ public class MovieListPanel extends JPanel implements GuiConstants {
 
         topPanel.add(searchField, BorderLayout.CENTER);
 
-        JButton checkReservationsField = new JButton("예매 조회하기");
-        checkReservationsField.setBackground(RED_COLOR);
-        checkReservationsField.setForeground(Color.WHITE);
-        checkReservationsField.setFont(new Font(KOREAN_FONT, Font.BOLD, 20));
+        JButton checkReservationsBtn = new JButton("예매 조회하기");
+        checkReservationsBtn.setBackground(RED_COLOR);
+        checkReservationsBtn.setForeground(Color.WHITE);
+        checkReservationsBtn.setPreferredSize(new Dimension(170, 40));
+        checkReservationsBtn.setFont(new Font(KOREAN_FONT, Font.BOLD, 20));
+        checkReservationsBtn.setOpaque(true);
+        checkReservationsBtn.setBorderPainted(false);
+        checkReservationsBtn.addActionListener(e -> mainController.showCheckReservationsView());
 
-        // ✅ 1. macOS 버그 수정을 위해 Opaque(불투명) 설정
-        checkReservationsField.setOpaque(true);
-        // ✅ 2. 테두리를 없애서 색상이 꽉 차게 함
-        checkReservationsField.setBorderPainted(false);
-
-        checkReservationsField.addActionListener(e -> {
-            mainController.showCheckReservationsView();
-        });
-        topPanel.add(checkReservationsField, BorderLayout.EAST);
+        JPanel buttonWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        buttonWrapper.setBackground(Color.BLACK);
+        buttonWrapper.add(checkReservationsBtn);
+        
+        topPanel.add(checkReservationsBtn, BorderLayout.EAST);
 
         return topPanel;
     }
@@ -143,8 +144,10 @@ public class MovieListPanel extends JPanel implements GuiConstants {
         titlePanel.add(titleLabel);
 
         
-        JPanel nowShowingAndButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 200, 0));
+        JPanel nowShowingAndButtonPanel = new JPanel();
+        nowShowingAndButtonPanel.setLayout(new BorderLayout());
         nowShowingAndButtonPanel.setBackground(Color.BLACK);
+        nowShowingAndButtonPanel.setBorder(BorderFactory.createEmptyBorder(0, 100, 0, 100));
 
         JLabel nowShowingLabel = new JLabel("Now Showing");
         nowShowingLabel.setForeground(Color.WHITE);
@@ -161,16 +164,17 @@ public class MovieListPanel extends JPanel implements GuiConstants {
         showAllButton.setBackground(Color.WHITE);
         showAllButton.setForeground(Color.BLACK);
         showAllButton.setFont(new Font(KOREAN_FONT, Font.PLAIN, 20));
-
-        // ✅ 1. macOS 버그 수정을 위해 Opaque(불투명) 설정
         showAllButton.setOpaque(true);
-        // ✅ 2. 테두리를 없애서 색상이 꽉 차게 함
         showAllButton.setBorderPainted(false);
-
         showAllButton.addActionListener(e -> {
             mainController.ShowAllMoviesView();
         });
-        nowShowingAndButtonPanel.add(showAllButton,BorderLayout.EAST);
+
+        JPanel buttonWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        buttonWrapper.setBackground(Color.BLACK);
+        buttonWrapper.add(showAllButton);
+
+        nowShowingAndButtonPanel.add(buttonWrapper,BorderLayout.EAST);
         
         topPanelOnCenter.add(titlePanel);
         topPanelOnCenter.add(nowShowingAndButtonPanel);
@@ -241,6 +245,11 @@ public class MovieListPanel extends JPanel implements GuiConstants {
 
         for (int i = startIndex; i < endIndex; i++) {
             Movie movie = selectedMovies.get(i);
+            Screening screening = screeningManager.findScreeningsByMovieId(movie.getMovieId());
+            if(screening == null) {
+                i--;
+                continue;
+            }
             JPanel movieCard = createMovieCard(movie);
             movieDisplayPanel.add(movieCard);
         }

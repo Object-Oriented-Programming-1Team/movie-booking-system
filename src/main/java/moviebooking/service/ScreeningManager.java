@@ -89,4 +89,13 @@ public class ScreeningManager extends BaseManager<Screening, String> {
         }
         return null;
     }
+
+    public List<Movie> getScreenedMovies() {
+        Set<Movie> uniqueMovies = new HashSet<>();
+        for (Screening screening : list) {
+            uniqueMovies.add(screening.getMovie());
+        }
+        // Set을 List로 변환하여 반환
+        return new ArrayList<>(uniqueMovies);
+    }
 }
