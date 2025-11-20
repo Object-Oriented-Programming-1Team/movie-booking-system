@@ -142,7 +142,38 @@ public class MovieListPanel extends JPanel implements GuiConstants {
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titlePanel.add(titleLabel);
 
+        
+        JPanel nowShowingAndButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 200, 0));
+        nowShowingAndButtonPanel.setBackground(Color.BLACK);
+
+        JLabel nowShowingLabel = new JLabel("Now Showing");
+        nowShowingLabel.setForeground(Color.WHITE);
+        nowShowingLabel.setFont(new Font(ENGLISH_FONT, Font.BOLD, 50));
+        nowShowingLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        nowShowingAndButtonPanel.add(nowShowingLabel,BorderLayout.WEST);
+
+        JPanel emptyPanel = new JPanel();
+        emptyPanel.setBackground(Color.BLACK);
+        emptyPanel.setPreferredSize(new Dimension(200,0));
+        nowShowingAndButtonPanel.add(emptyPanel,BorderLayout.CENTER);
+
+        JButton showAllButton = new JButton("전체보기");
+        showAllButton.setBackground(Color.WHITE);
+        showAllButton.setForeground(Color.BLACK);
+        showAllButton.setFont(new Font(KOREAN_FONT, Font.PLAIN, 20));
+
+        // ✅ 1. macOS 버그 수정을 위해 Opaque(불투명) 설정
+        showAllButton.setOpaque(true);
+        // ✅ 2. 테두리를 없애서 색상이 꽉 차게 함
+        showAllButton.setBorderPainted(false);
+
+        showAllButton.addActionListener(e -> {
+            mainController.ShowAllMoviesView();
+        });
+        nowShowingAndButtonPanel.add(showAllButton,BorderLayout.EAST);
+        
         topPanelOnCenter.add(titlePanel);
+        topPanelOnCenter.add(nowShowingAndButtonPanel);
 
         centerPanel.add(topPanelOnCenter, BorderLayout.NORTH);
 
