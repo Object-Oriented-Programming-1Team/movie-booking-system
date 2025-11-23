@@ -1,24 +1,40 @@
 package main.java.moviebooking.view;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 
 import main.java.moviebooking.common.GuiConstants;
 import main.java.moviebooking.controller.MainController;
 import main.java.moviebooking.model.Movie;
 import main.java.moviebooking.service.MovieManager;
+import main.java.moviebooking.service.ScreeningManager;
 
 public class ShowAllMoviesPanel extends JPanel implements GuiConstants {
     
     private final MainController mainController;
     private final MovieManager movieManager;
+    private final ScreeningManager screeningManager;
 
-    public ShowAllMoviesPanel(MainController mainController, MovieManager movieManager) {
+    private JPanel movieDisplayPanel;
+    private List<Movie> selectedMovies;
+
+    public ShowAllMoviesPanel(MainController mainController, MovieManager movieManager, ScreeningManager screeningManager) {
         this.mainController = mainController;
         this.movieManager = movieManager;
+        this.screeningManager = screeningManager;
+
+        this.selectedMovies = movieManager.findAll();
 
         setBackground(Color.BLACK);
         setLayout(new BorderLayout());
@@ -26,100 +42,134 @@ public class ShowAllMoviesPanel extends JPanel implements GuiConstants {
         add(createTopPanel(), BorderLayout.NORTH);
         add(createScrollableMovieGrid(), BorderLayout.CENTER);
         add(createBottomPanel(), BorderLayout.SOUTH);
+        
+        updateMovieDisplay();
     }
 
     private JPanel createTopPanel() {
-        JPanel topPanel = new JPanel(new BorderLayout());
+        // MovieListPanel의 createTopPanel과 동일하게 구성
+        JPanel topPanel = new JPanel(new BorderLayout(20, 0));
         topPanel.setBackground(Color.BLACK);
-        topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 
-        // 1. 좌측: 뒤로가기 + 로고
-        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
-        leftPanel.setBackground(Color.BLACK);
-        
-        JButton backButton = new JButton("◀");
-        backButton.setFont(new Font(KOREAN_FONT, Font.BOLD, 30));
-        backButton.setForeground(Color.GRAY);
-        backButton.setContentAreaFilled(false);
-        backButton.setBorderPainted(false);
-        backButton.addActionListener(e -> mainController.showMovieListView());
-        
         JLabel logoLabel = new JLabel("Logo");
         logoLabel.setForeground(Color.WHITE);
         logoLabel.setFont(new Font(ENGLISH_FONT, Font.BOLD, 30));
+        topPanel.add(logoLabel, BorderLayout.WEST);
 
-        leftPanel.add(backButton);
-        leftPanel.add(logoLabel);
+        final String placeholder = " search title, genre, or date (YYYY-MM-DD)";
+        JTextField searchField = new JTextField(placeholder);
+        searchField.setBackground(Color.BLACK);
+        searchField.setForeground(Color.LIGHT_GRAY);
+        searchField.setBorder(new LineBorder(Color.WHITE, 1));
+        searchField.setPreferredSize(new Dimension(400, 40));
 
-        JLabel titleLabel = new JLabel("Movies");
-        titleLabel.setForeground(RED_COLOR);
-        titleLabel.setFont(new Font(ENGLISH_FONT, Font.BOLD, 60));
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        searchField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if(searchField.getText().equals(placeholder)) {
+                    searchField.setText("");
+                    searchField.setForeground(Color.WHITE);
+                }
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                if(searchField.getText().isEmpty()) {
+                    searchField.setForeground(Color.LIGHT_GRAY);
+                    searchField.setText(placeholder);
+                }
+            }
+        });
 
-        JButton checkReservationsBtn = new JButton("예매 조회하기");
-        checkReservationsBtn.setBackground(RED_COLOR);
-        checkReservationsBtn.setForeground(Color.WHITE);
-        checkReservationsBtn.setPreferredSize(new Dimension(170, 40));
-        checkReservationsBtn.setFont(new Font(KOREAN_FONT, Font.BOLD, 20));
-        checkReservationsBtn.setOpaque(true);
-        checkReservationsBtn.setBorderPainted(false);
-        checkReservationsBtn.addActionListener(e -> mainController.showCheckReservationsView());
+        searchField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                String keyword = searchField.getText().trim();
 
-        JPanel buttonWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        buttonWrapper.setBackground(Color.BLACK);
-        buttonWrapper.add(checkReservationsBtn);
+                if(keyword.isEmpty() || keyword.equals(placeholder)) {
+                    selectedMovies = movieManager.findAll();
+                } else{
+                    try {
+                        LocalDate date = LocalDate.parse(keyword);
+                        selectedMovies = screeningManager.findMoviesByDate(date);
+                    } catch (DateTimeParseException ex) {
+                        selectedMovies = movieManager.searchMoviesByTitleOrGenre(keyword);
+                    }
+                }
+                updateMovieDisplay();
+            }
+        });
 
-        topPanel.add(leftPanel, BorderLayout.WEST);
-        topPanel.add(titleLabel, BorderLayout.CENTER);
-        topPanel.add(buttonWrapper, BorderLayout.EAST);
+        topPanel.add(searchField, BorderLayout.CENTER);
+
+        JButton checkReservationsField = new JButton("예매 조회하기");
+        checkReservationsField.setBackground(RED_COLOR);
+        checkReservationsField.setForeground(Color.WHITE);
+        checkReservationsField.setFont(new Font(KOREAN_FONT, Font.BOLD, 20));
+        checkReservationsField.setOpaque(true);
+        checkReservationsField.setBorderPainted(false);
+
+        checkReservationsField.addActionListener(e -> {
+            mainController.showCheckReservationsView();
+        });
+        topPanel.add(checkReservationsField, BorderLayout.EAST);
 
         return topPanel;
     }
 
     private JScrollPane createScrollableMovieGrid() {
-        List<Movie> allMovies = movieManager.findAll();
+        movieDisplayPanel = new JPanel(new GridLayout(0, 5, 20, 40)); // 5열 고정
+        movieDisplayPanel.setBackground(Color.BLACK);
+        movieDisplayPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
 
-        // 그리드 패널 생성 (행 개수는 0으로 하여 자동 조절, 열은 5개)
-        JPanel gridPanel = new JPanel(new GridLayout(0, 5, 20, 20));
-        gridPanel.setBackground(Color.BLACK);
-        gridPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 40));
-
-        for (Movie movie : allMovies) {
-            gridPanel.add(createMovieCard(movie));
-        }
-
-        JScrollPane scrollPane = new JScrollPane(gridPanel);
+        JScrollPane scrollPane = new JScrollPane(movieDisplayPanel);
         scrollPane.setBorder(null);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(15);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16); //스크롤바 내리는 속도
         
         return scrollPane;
+    }
+
+    private void updateMovieDisplay() {
+        movieDisplayPanel.removeAll();
+
+        for (Movie movie : selectedMovies) {
+            movieDisplayPanel.add(createMovieCard(movie));
+        }
+        
+        if (selectedMovies.size() <= 0) {
+             // 검색 결과가 없을 때
+             JLabel noResultLabel = new JLabel("검색 결과가 없습니다.");
+             noResultLabel.setForeground(Color.WHITE);
+             noResultLabel.setFont(new Font(KOREAN_FONT, Font.BOLD, 20));
+             noResultLabel.setHorizontalAlignment(SwingConstants.CENTER);
+             movieDisplayPanel.add(noResultLabel);
+        }
+
+        movieDisplayPanel.revalidate();
+        movieDisplayPanel.repaint();
     }
 
     private JPanel createMovieCard(Movie movie) {
         JPanel cardPanel = new JPanel(new BorderLayout(0, 10));
         cardPanel.setBackground(Color.BLACK);
 
-        // 포스터
         JLabel posterLabel = new JLabel();
         posterLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        posterLabel.setPreferredSize(new Dimension(200, 280));
+        posterLabel.setPreferredSize(new Dimension(200, 280)); 
 
         try {
             String imagePath = "main/java/resources/movie_images/" + movie.getPosterUrl();
             URL imageUrl = getClass().getClassLoader().getResource(imagePath);
-
-            ImageIcon originalIcon;
             if (imageUrl != null) {
-                originalIcon = new ImageIcon(imageUrl);
+                ImageIcon icon = new ImageIcon(imageUrl);
+                Image img = icon.getImage().getScaledInstance(200, 280, Image.SCALE_SMOOTH);
+                posterLabel.setIcon(new ImageIcon(img));
             } else {
-                throw new Exception("Image not found: " + imagePath);
+                posterLabel.setText("이미지 없음");
+                posterLabel.setForeground(Color.WHITE);
             }
-
-            Image resizedImage = originalIcon.getImage().getScaledInstance(200, 280, Image.SCALE_SMOOTH);
-            posterLabel.setIcon(new ImageIcon(resizedImage));
         } catch (Exception e) {
-            posterLabel.setText(movie.getMovieTitle() + " (이미지 로드 실패)");
-            posterLabel.setForeground(Color.WHITE);
+            posterLabel.setText("오류");
         }
         cardPanel.add(posterLabel, BorderLayout.CENTER);
 
@@ -129,7 +179,10 @@ public class ShowAllMoviesPanel extends JPanel implements GuiConstants {
         bookButton.setFont(new Font(KOREAN_FONT, Font.BOLD, 14));
         bookButton.setOpaque(true);
         bookButton.setBorderPainted(false);
-        bookButton.addActionListener(e -> mainController.showBookMovieView(movie));
+        
+        bookButton.addActionListener(e -> {
+            mainController.showBookMovieView(movie);
+        });
         cardPanel.add(bookButton, BorderLayout.SOUTH);
 
         return cardPanel;
@@ -138,12 +191,14 @@ public class ShowAllMoviesPanel extends JPanel implements GuiConstants {
     private JPanel createBottomPanel() {
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottomPanel.setBackground(Color.BLACK);
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 30));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 30));
 
         JButton getTicketButton = new JButton("GET TICKET");
-        getTicketButton.setBackground(DARK_BLUE_COLOR);
+        getTicketButton.setBackground(new Color(30, 52, 92, 200));
         getTicketButton.setForeground(RED_COLOR);
-        getTicketButton.setFont(new Font(ENGLISH_FONT, Font.PLAIN, 25));
+        getTicketButton.setFont(new Font(ENGLISH_FONT, Font.BOLD, 24));
+        getTicketButton.setFocusPainted(false);
+        
         bottomPanel.add(getTicketButton);
         return bottomPanel;
     }
