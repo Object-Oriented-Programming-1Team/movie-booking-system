@@ -19,7 +19,7 @@ public class CheckReservationsPanel extends JPanel {
 
         JButton backButton = new JButton("뒤로 가기");
         backButton.addActionListener(e -> {
-            mainController.showMovieListView();
+            mainController.showAllMoviesView();
         });
         add(backButton);
     }
