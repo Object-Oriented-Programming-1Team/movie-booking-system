@@ -264,7 +264,7 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
         for(Screening screening:screeningsByMoiveId){
             LocalDateTime curDateTime = screening.getStartTime();
             if(curDateTime.isBefore(firstScreeningDateTime)){
-                curDateTime=firstScreeningDateTime;
+                firstScreeningDateTime=curDateTime;
             }
         }
         
