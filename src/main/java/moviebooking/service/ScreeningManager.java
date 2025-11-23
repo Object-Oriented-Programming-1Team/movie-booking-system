@@ -82,12 +82,13 @@ public class ScreeningManager extends BaseManager<Screening, String> {
         return new ArrayList<>(moviesOnDate);
     }
 
-    public Screening findScreeningsByMovieId(String movieId){
+    public List<Screening> findScreeningsByMovieId(String movieId){
+        List<Screening> screenings = new ArrayList<>();
         for (Screening screening : list) {
-            if(screening.getMovie().getMovieId().equals(movieId))
-                return screening;
+            if (screening.getMovie().getMovieId().equals(movieId))
+                screenings.add(screening);
         }
-        return null;
+        return screenings;
     }
 
     public List<Movie> getScreenedMovies() {

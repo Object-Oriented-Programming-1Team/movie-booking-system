@@ -8,7 +8,9 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import javax.swing.*; // (필요한 import 추가)
 
@@ -113,7 +115,7 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
         backButton.setBorderPainted(false);
         
         backButton.addActionListener(e -> {
-            mainController.showMovieListView();
+            mainController.showAllMoviesView();
         });
         topPanel.add(backButton, BorderLayout.WEST);
 
@@ -152,8 +154,7 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
         bookButton.setBorderPainted(false);
         bookButton.addActionListener(e -> {
             //TODO: Controller를 통해 좌석선택화면으로 이동
-            // mainController.showSeatSelectionView(movie);
-            System.out.println("좌석 선택 화면으로 이동: " + movie.getMovieTitle());
+            mainController.showTimeSelectView(movie);
         });
         return bookButton;
     }
@@ -257,14 +258,22 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
     }
 
     private String dateTimeFormatter(Movie movie) {
-        Screening firstScreening = screeningManager.findScreeningsByMovieId(movie.getMovieId());
+        List<Screening> screeningsByMoiveId = screeningManager.findScreeningsByMovieId(movie.getMovieId());
+        LocalDateTime firstScreeningDateTime=LocalDateTime.MAX;
+
+        for(Screening screening:screeningsByMoiveId){
+            LocalDateTime curDateTime = screening.getStartTime();
+            if(curDateTime.isBefore(firstScreeningDateTime)){
+                curDateTime=firstScreeningDateTime;
+            }
+        }
         
-        if(firstScreening == null) {
+        if(firstScreeningDateTime == LocalDateTime.MAX) {
             System.out.println("[WARNING] BookMoviePanel: 상영 정보가 없습니다. movieId: " + movie.getMovieId());
             return "상영 정보 없음";
         }
         
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return firstScreening.getStartTime().format(formatter);
+        return firstScreeningDateTime.format(formatter);
     }
 }

@@ -167,7 +167,7 @@ public class MovieListPanel extends JPanel implements GuiConstants {
         showAllButton.setOpaque(true);
         showAllButton.setBorderPainted(false);
         showAllButton.addActionListener(e -> {
-            mainController.ShowAllMoviesView();
+            mainController.showAllMoviesView();
         });
 
         JPanel buttonWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -237,33 +237,33 @@ public class MovieListPanel extends JPanel implements GuiConstants {
         return bottomPanel;
     }
 
-    private void updateMovieDisplay() {
-        movieDisplayPanel.removeAll();
+        private void updateMovieDisplay() {
+            movieDisplayPanel.removeAll();
 
-        int startIndex = currentPage * moviesPerPage;
-        int endIndex = Math.min(startIndex + moviesPerPage, selectedMovies.size());
+            int startIndex = currentPage * moviesPerPage;
+            int endIndex = Math.min(startIndex + moviesPerPage, selectedMovies.size());
 
-        for (int i = startIndex; i < endIndex; i++) {
-            Movie movie = selectedMovies.get(i);
-            Screening screening = screeningManager.findScreeningsByMovieId(movie.getMovieId());
-            if(screening == null) {
-                i--;
-                continue;
+            for (int i = startIndex; i < endIndex; i++) {
+                Movie movie = selectedMovies.get(i);
+                List<Screening> screenings = screeningManager.findScreeningsByMovieId(movie.getMovieId());
+                if(screenings == null || screenings.isEmpty()) {
+                    i--;
+                    continue;
+                }
+                JPanel movieCard = createMovieCard(movie);
+                movieDisplayPanel.add(movieCard);
             }
-            JPanel movieCard = createMovieCard(movie);
-            movieDisplayPanel.add(movieCard);
-        }
 
-        int emptySlots = moviesPerPage - (endIndex - startIndex);
-        for (int i = 0; i < emptySlots; i++) {
-            JPanel emptyPanel = new JPanel();
-            emptyPanel.setBackground(Color.BLACK);
-            movieDisplayPanel.add(emptyPanel);
-        }
+            int emptySlots = moviesPerPage - (endIndex - startIndex);
+            for (int i = 0; i < emptySlots; i++) {
+                JPanel emptyPanel = new JPanel();
+                emptyPanel.setBackground(Color.BLACK);
+                movieDisplayPanel.add(emptyPanel);
+            }
 
-        movieDisplayPanel.revalidate();
-        movieDisplayPanel.repaint();
-    }
+            movieDisplayPanel.revalidate();
+            movieDisplayPanel.repaint();
+        }
 
     private JPanel createMovieCard(Movie movie) {
         JPanel cardPanel = new JPanel(new BorderLayout(0, 15));
