@@ -3,6 +3,7 @@ package main.java.moviebooking.service;
 import main.java.moviebooking.model.Screen;
 
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -40,5 +41,16 @@ public class ScreenManager extends BaseManager<Screen, String> {
             //파일 끝에 도달했거나 형식이 맞지 않음
             return null;
         }
+    }
+
+    public List<String> findAllScreenTypes() {
+        List<String> screenTypes = new java.util.ArrayList<>();
+        for (Screen screen : list) {
+            String type = screen.getScreenType();
+            if (!screenTypes.contains(type)) {
+                screenTypes.add(type);
+            }
+        }
+        return screenTypes;
     }
 }
