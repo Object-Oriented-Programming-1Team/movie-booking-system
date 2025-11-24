@@ -50,7 +50,7 @@ public class ShowAllMoviesPanel extends JPanel implements GuiConstants {
         // MovieListPanel의 createTopPanel과 동일하게 구성
         JPanel topPanel = new JPanel(new BorderLayout(20, 0));
         topPanel.setBackground(Color.BLACK);
-        topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JLabel logoLabel = new JLabel("Logo");
         logoLabel.setForeground(Color.WHITE);
@@ -118,7 +118,7 @@ public class ShowAllMoviesPanel extends JPanel implements GuiConstants {
     }
 
     private JScrollPane createScrollableMovieGrid() {
-        movieDisplayPanel = new JPanel(new GridLayout(0, 5, 20, 40)); // 5열 고정
+        movieDisplayPanel = new JPanel(new GridLayout(0, 5, 20, 20)); // 5열 고정
         movieDisplayPanel.setBackground(Color.BLACK);
         movieDisplayPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
 
@@ -194,7 +194,7 @@ public class ShowAllMoviesPanel extends JPanel implements GuiConstants {
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 30));
 
         JButton getTicketButton = new JButton("GET TICKET");
-        getTicketButton.setBackground(new Color(30, 52, 92, 200));
+        getTicketButton.setBackground(DARK_BLUE_COLOR);
         getTicketButton.setForeground(RED_COLOR);
         getTicketButton.setFont(new Font(ENGLISH_FONT, Font.BOLD, 24));
         getTicketButton.setFocusPainted(false);
