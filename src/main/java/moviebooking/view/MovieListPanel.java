@@ -3,6 +3,7 @@ package main.java.moviebooking.view;
 import main.java.moviebooking.common.GuiConstants;
 import main.java.moviebooking.controller.MainController;
 import main.java.moviebooking.model.Movie;
+import main.java.moviebooking.model.Screening;
 import main.java.moviebooking.service.MovieManager;
 import main.java.moviebooking.service.ScreenManager;
 import main.java.moviebooking.service.ScreeningManager;
@@ -37,7 +38,7 @@ public class MovieListPanel extends JPanel implements GuiConstants {
         this.movieManager = movieManager;
         this.screenManager = screenManager;
         this.screeningManager = screeningManager;
-        this.allMovies = this.movieManager.findAll();
+        this.allMovies = this.screeningManager.getScreenedMovies();
         this.selectedMovies = new ArrayList<>(this.allMovies);
         this.mainController = mainController;
 
@@ -107,20 +108,20 @@ public class MovieListPanel extends JPanel implements GuiConstants {
 
         topPanel.add(searchField, BorderLayout.CENTER);
 
-        JButton checkReservationsField = new JButton("예매 조회하기");
-        checkReservationsField.setBackground(RED_COLOR);
-        checkReservationsField.setForeground(Color.WHITE);
-        checkReservationsField.setFont(new Font(KOREAN_FONT, Font.BOLD, 20));
+        JButton checkReservationsBtn = new JButton("예매 조회하기");
+        checkReservationsBtn.setBackground(RED_COLOR);
+        checkReservationsBtn.setForeground(Color.WHITE);
+        checkReservationsBtn.setPreferredSize(new Dimension(170, 40));
+        checkReservationsBtn.setFont(new Font(KOREAN_FONT, Font.BOLD, 20));
+        checkReservationsBtn.setOpaque(true);
+        checkReservationsBtn.setBorderPainted(false);
+        checkReservationsBtn.addActionListener(e -> mainController.showCheckReservationsView());
 
-        // ✅ 1. macOS 버그 수정을 위해 Opaque(불투명) 설정
-        checkReservationsField.setOpaque(true);
-        // ✅ 2. 테두리를 없애서 색상이 꽉 차게 함
-        checkReservationsField.setBorderPainted(false);
-
-        checkReservationsField.addActionListener(e -> {
-            mainController.showCheckReservationsView();
-        });
-        topPanel.add(checkReservationsField, BorderLayout.EAST);
+        JPanel buttonWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        buttonWrapper.setBackground(Color.BLACK);
+        buttonWrapper.add(checkReservationsBtn);
+        
+        topPanel.add(checkReservationsBtn, BorderLayout.EAST);
 
         return topPanel;
     }
@@ -142,7 +143,41 @@ public class MovieListPanel extends JPanel implements GuiConstants {
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titlePanel.add(titleLabel);
 
+        
+        JPanel nowShowingAndButtonPanel = new JPanel();
+        nowShowingAndButtonPanel.setLayout(new BorderLayout());
+        nowShowingAndButtonPanel.setBackground(Color.BLACK);
+        nowShowingAndButtonPanel.setBorder(BorderFactory.createEmptyBorder(0, 100, 0, 100));
+
+        JLabel nowShowingLabel = new JLabel("Now Showing");
+        nowShowingLabel.setForeground(Color.WHITE);
+        nowShowingLabel.setFont(new Font(ENGLISH_FONT, Font.BOLD, 50));
+        nowShowingLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        nowShowingAndButtonPanel.add(nowShowingLabel,BorderLayout.WEST);
+
+        JPanel emptyPanel = new JPanel();
+        emptyPanel.setBackground(Color.BLACK);
+        emptyPanel.setPreferredSize(new Dimension(200,0));
+        nowShowingAndButtonPanel.add(emptyPanel,BorderLayout.CENTER);
+
+        JButton showAllButton = new JButton("전체보기");
+        showAllButton.setBackground(Color.WHITE);
+        showAllButton.setForeground(Color.BLACK);
+        showAllButton.setFont(new Font(KOREAN_FONT, Font.PLAIN, 20));
+        showAllButton.setOpaque(true);
+        showAllButton.setBorderPainted(false);
+        showAllButton.addActionListener(e -> {
+            mainController.showAllMoviesView();
+        });
+
+        JPanel buttonWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        buttonWrapper.setBackground(Color.BLACK);
+        buttonWrapper.add(showAllButton);
+
+        nowShowingAndButtonPanel.add(buttonWrapper,BorderLayout.EAST);
+        
         topPanelOnCenter.add(titlePanel);
+        topPanelOnCenter.add(nowShowingAndButtonPanel);
 
         centerPanel.add(topPanelOnCenter, BorderLayout.NORTH);
 
@@ -202,28 +237,33 @@ public class MovieListPanel extends JPanel implements GuiConstants {
         return bottomPanel;
     }
 
-    private void updateMovieDisplay() {
-        movieDisplayPanel.removeAll();
+        private void updateMovieDisplay() {
+            movieDisplayPanel.removeAll();
 
-        int startIndex = currentPage * moviesPerPage;
-        int endIndex = Math.min(startIndex + moviesPerPage, selectedMovies.size());
+            int startIndex = currentPage * moviesPerPage;
+            int endIndex = Math.min(startIndex + moviesPerPage, selectedMovies.size());
 
-        for (int i = startIndex; i < endIndex; i++) {
-            Movie movie = selectedMovies.get(i);
-            JPanel movieCard = createMovieCard(movie);
-            movieDisplayPanel.add(movieCard);
+            for (int i = startIndex; i < endIndex; i++) {
+                Movie movie = selectedMovies.get(i);
+                List<Screening> screenings = screeningManager.findScreeningsByMovieId(movie.getMovieId());
+                if(screenings == null || screenings.isEmpty()) {
+                    i--;
+                    continue;
+                }
+                JPanel movieCard = createMovieCard(movie);
+                movieDisplayPanel.add(movieCard);
+            }
+
+            int emptySlots = moviesPerPage - (endIndex - startIndex);
+            for (int i = 0; i < emptySlots; i++) {
+                JPanel emptyPanel = new JPanel();
+                emptyPanel.setBackground(Color.BLACK);
+                movieDisplayPanel.add(emptyPanel);
+            }
+
+            movieDisplayPanel.revalidate();
+            movieDisplayPanel.repaint();
         }
-
-        int emptySlots = moviesPerPage - (endIndex - startIndex);
-        for (int i = 0; i < emptySlots; i++) {
-            JPanel emptyPanel = new JPanel();
-            emptyPanel.setBackground(Color.BLACK);
-            movieDisplayPanel.add(emptyPanel);
-        }
-
-        movieDisplayPanel.revalidate();
-        movieDisplayPanel.repaint();
-    }
 
     private JPanel createMovieCard(Movie movie) {
         JPanel cardPanel = new JPanel(new BorderLayout(0, 15));
