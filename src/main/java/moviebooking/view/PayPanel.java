@@ -52,7 +52,8 @@ public class PayPanel extends JPanel implements GuiConstants {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 System.out.println("뒤로가기: 좌석 선택 화면으로 이동 예정");
-                // TODO: mainController.showSeatSelectionView();
+                // TODO: screening객체를 받아야하는데 String으로 받아오니까 코드가 꼬임..
+//                mainController.showSeatSelectionView(screening);
             }
         });
 

@@ -37,10 +37,12 @@ public class Main {
             CheckReservationsPanel checkReservationsPanel = new CheckReservationsPanel(mainController);
             ShowAllMoviesPanel showAllMoviesPanel = new ShowAllMoviesPanel(mainController, movieManager, screeningManager);
             TimeSelectPanel timeSelectPanel = new TimeSelectPanel(mainController, screeningManager, screenManager);
+            PayPanel payPanel = new PayPanel(mainController);
 
             // 3.4. Controller가 Panel들을 알도록 주입 (필요시)
             mainController.setBookMoviePanel(bookMoviePanel);
             mainController.setTimeSelectPanel(timeSelectPanel);
+            mainController.setPayPanel(payPanel);
 
             // 3.5. '창'에 '내용물'들을 '카드'로 등록
             mainFrame.addPanel(movieListPanel, "movieList");
@@ -48,6 +50,7 @@ public class Main {
             mainFrame.addPanel(checkReservationsPanel, "checkReservations");
             mainFrame.addPanel(showAllMoviesPanel, "allMovies");
             mainFrame.addPanel(timeSelectPanel, "timeSelect");
+            mainFrame.addPanel(payPanel, "pay");
 
             // 3.6. 프로그램 시작
             mainFrame.setVisible(true);

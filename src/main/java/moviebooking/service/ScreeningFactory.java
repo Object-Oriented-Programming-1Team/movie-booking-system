@@ -28,13 +28,17 @@ public class ScreeningFactory {
         int defaultPrice = screen.getDefaultPrice();
 
         Seat[][] seats = new Seat[rows][cols];
+        switch (screen.getSeatLayoutType()) {
+            case "COUPLE_BACK":
+                seats = createCoupleBackLayout(screen);
+                break;
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                // [0][0] -> "A1", [1][2] -> "B3"
-                String seatNum = (char)('A' + i) + "" + (j + 1);
-                seats[i][j] = new Seat(seatNum, false, defaultPrice);
-            }
+            case "MIDDLE_AISLE":
+                seats = createMiddleAisleLayout(screen);
+                break;
+
+            default:
+                seats = createNormalLayout(screen);
         }
 
         screening.setScreeningId(screeningId);
@@ -45,5 +49,90 @@ public class ScreeningFactory {
         screening.setEndTime(startTime.plusMinutes(movie.getRuntime()));
 
         return screening; // '완제품' 반환
+    }
+
+    // ================================
+    // 1) 일반관 — 전체 좌석 동일
+    // ================================
+    private Seat[][] createNormalLayout(Screen screen) {
+        int rows = screen.getRows();
+        int cols = screen.getCols();
+        int price = screen.getDefaultPrice();
+
+        Seat[][] seats = new Seat[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                String seatNum = (char) ('A' + i) + "" + (j + 1);
+                seats[i][j] = new Seat(seatNum, false, price);
+            }
+        }
+        return seats;
+    }
+
+    // =======================================
+    // 2) COUPLE_BACK 레이아웃
+    // → 마지막 2줄은 짝지어서 붙은 좌석으로 표시
+    // =======================================
+    private Seat[][] createCoupleBackLayout(Screen screen) {
+
+        int rows = screen.getRows();
+        int cols = screen.getCols();
+        int price = screen.getDefaultPrice();
+
+        Seat[][] seats = new Seat[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+
+            for (int j = 0; j < cols; j++) {
+
+                String seatNum = (char) ('A' + i) + "" + (j + 1);
+
+                Seat seat = new Seat(seatNum, false, price);
+
+                // 마지막 두 줄이 커플석
+                if (i >= rows - 2) {
+                    seat.setCoupleSeat(true);
+                }
+
+                seats[i][j] = seat;
+            }
+        }
+
+        return seats;
+    }
+
+
+    // =======================================
+    // 3) MIDDLE_AISLE 레이아웃
+    // → 가운데 통로가 있어서 중앙 몇 칸은 null로 처리
+    // =======================================
+    private Seat[][] createMiddleAisleLayout(Screen screen) {
+
+        int rows = screen.getRows();
+        int cols = screen.getCols();
+        int price = screen.getDefaultPrice();
+
+        Seat[][] seats = new Seat[rows][cols];
+
+        int aisleCol = cols / 2 - 1;  // 가운데 구역 2칸 통로
+        int aisleCol2 = aisleCol + 1;
+
+        for (int i = 0; i < rows; i++) {
+
+            for (int j = 0; j < cols; j++) {
+
+                // 가운데 2칸은 통로
+                if (j == aisleCol || j == aisleCol2) {
+                    seats[i][j] = null; // 통로
+                    continue;
+                }
+
+                String seatNum = (char) ('A' + i) + "" + (j + 1);
+                seats[i][j] = new Seat(seatNum, false, price);
+            }
+        }
+
+        return seats;
     }
 }

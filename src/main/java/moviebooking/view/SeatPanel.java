@@ -1,10 +1,7 @@
 package main.java.moviebooking.view;
 
 import main.java.moviebooking.controller.MainController;
-import main.java.moviebooking.model.Seat;
-import main.java.moviebooking.model.Screening;
-import main.java.moviebooking.model.Screen;
-import main.java.moviebooking.model.Reservation;
+import main.java.moviebooking.model.*;
 
 
 import javax.swing.*;
@@ -31,10 +28,8 @@ public class SeatPanel extends JPanel {
     private Seat[][] seats;
 
     private int peopleCount = 1; // 기본 1명
-    private ArrayList<JButton> peopleButtons = new ArrayList<>();
-
-
-
+    private JPanel seatPanel; // 좌석 버튼들을 담는 패널을 멤버 변수로 추가
+    
     public SeatPanel(Screening screening, MainController mainController) {
         this.screening = screening;
         this.seats = screening.getSeats();
@@ -48,18 +43,6 @@ public class SeatPanel extends JPanel {
         add(createMainPanel(), BorderLayout.CENTER);
 
     }
-
-    private void highlightPeopleButton(JButton selected) {
-        for (JButton b : peopleButtons) {
-            if (b == selected) {
-                b.setBackground(new Color(220, 80, 80));
-            } else {
-                b.setBackground(Color.DARK_GRAY);
-            }
-        }
-    }
-
-
 
     private JPanel createTopPanel(Screening screening) {
         JPanel panel = new JPanel(new BorderLayout());
@@ -153,7 +136,8 @@ public class SeatPanel extends JPanel {
         int rows = seats.length;
         int cols = seats[0].length;
 
-        JPanel seatPanel = new JPanel(new GridLayout(rows, cols, 7, 7));
+        // 멤버 변수 seatPanel 초기화
+        seatPanel = new JPanel(new GridLayout(rows, cols, 7, 7));
         seatPanel.setBackground(COLOR_BG);
 
         for (int i = 0; i < rows; i++) {
@@ -185,6 +169,7 @@ public class SeatPanel extends JPanel {
                             JButton btn = new JButton();
                             btn.setPreferredSize(new Dimension(35, 35));
                             btn.setBorderPainted(false);
+                            btn.setOpaque(true);
                             btn.setBackground(COLOR_COUPLE_EMPTY);
 
                             btn.addActionListener(e -> {
@@ -212,6 +197,7 @@ public class SeatPanel extends JPanel {
 
                         JButton btn = new JButton();
                         btn.setBorderPainted(false);
+                        btn.setOpaque(true);
                         btn.setBackground(COLOR_COUPLE_EMPTY);
                         btn.setPreferredSize(new Dimension(80, 35)); // 2칸 좌석
 
@@ -259,6 +245,7 @@ public class SeatPanel extends JPanel {
                 JButton btn = new JButton();
                 btn.setPreferredSize(new Dimension(35, 35));
                 btn.setBorderPainted(false);
+                btn.setOpaque(true);
 
                 if (seat.isBooked()) {
                     btn.setBackground(COLOR_BOOKED);
@@ -335,31 +322,32 @@ public class SeatPanel extends JPanel {
         peopleLabel.setFont(new Font("맑은 고딕", Font.BOLD, 20));
         peopleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JPanel peopleBtnPanel = new JPanel(new FlowLayout());
-        peopleBtnPanel.setBackground(COLOR_BG);
+        // === JSpinner를 사용한 인원 선택 UI ===
+        // 1. Spinner 모델 생성 (초기값: 1, 최소: 1, 최대: 10, 단계: 1)
+        SpinnerModel spinnerModel = new SpinnerNumberModel(1, 1, 10, 1);
+        JSpinner peopleSpinner = new JSpinner(spinnerModel);
+        peopleSpinner.setPreferredSize(new Dimension(80, 40));
+        peopleSpinner.setFont(new Font("맑은 고딕", Font.BOLD, 18));
 
-        String[] labels = {"1", "2", "3", "4"};
-        for (String txt : labels) {
-            JButton b = new JButton(txt);
-            b.setPreferredSize(new Dimension(50, 40));
-            b.setBackground(Color.DARK_GRAY);
-            b.setForeground(Color.WHITE);
-            b.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+        // 2. Spinner 값 변경 리스너 추가
+        peopleSpinner.addChangeListener(e -> {
+            // 스피너의 현재 값을 가져와 peopleCount에 저장
+            peopleCount = (int) peopleSpinner.getValue();
 
-            b.addActionListener(e -> {
-                highlightPeopleButton(b);
-                peopleCount = Integer.parseInt(txt);
-                updateRightPanel();
-            });
+            // 🚨 수정: 화면을 새로고침하는 대신, 선택된 좌석만 초기화
+            resetSeatSelection();
 
-            peopleButtons.add(b);
-            peopleBtnPanel.add(b);
-        }
+            // 오른쪽 정보 패널 업데이트
+            updateRightPanel();
+        });
 
-        highlightPeopleButton(peopleButtons.get(0));
+        JPanel peopleSpinnerPanel = new JPanel(new FlowLayout());
+        peopleSpinnerPanel.setBackground(COLOR_BG);
+        peopleSpinnerPanel.add(peopleSpinner);
+
 
         // ⭐ 선택 좌석 라벨
-        selectedLabel = new JLabel("선택 좌석 : ");
+        selectedLabel = new JLabel("선택 좌석 : 없음");
         selectedLabel.setForeground(Color.WHITE);
         selectedLabel.setFont(new Font("맑은 고딕", Font.BOLD, 18));
         selectedLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -372,7 +360,7 @@ public class SeatPanel extends JPanel {
 
         topArea.add(peopleLabel);
         topArea.add(Box.createVerticalStrut(10));
-        topArea.add(peopleBtnPanel);
+        topArea.add(peopleSpinnerPanel);
         topArea.add(Box.createVerticalStrut(30));
         topArea.add(selectedLabel);
         topArea.add(Box.createVerticalStrut(20));
@@ -380,7 +368,11 @@ public class SeatPanel extends JPanel {
 
         // === 하단 영역 (결제 버튼) ===
         JButton payBtn = new JButton("결제하기");
-        payBtn.setBackground(new Color(150, 40, 40));
+        payBtn.setBackground(Color.RED);
+        payBtn.setOpaque(true);
+        payBtn.setBorderPainted(false);
+        payBtn.setFocusPainted(false);
+        payBtn.setContentAreaFilled(true);
         payBtn.setForeground(Color.WHITE);
         payBtn.setFont(new Font("맑은 고딕", Font.BOLD, 25));
         payBtn.setPreferredSize(new Dimension(220, 60));
@@ -399,14 +391,12 @@ public class SeatPanel extends JPanel {
             }
 
             // Reservation 객체 생성
-            Reservation reservation = new Reservation(
-                    screening.getMovie(),
+            Booking booking = new Booking(
                     screening,
-                    new ArrayList<>(selectedSeats),
-                    totalPrice
-            );
+                    new ArrayList<>(selectedSeats)
+                    );
             // 결제 화면으로 정보 전달
-            mainController.showPaymentView(reservation);
+            mainController.showPaymentView(booking);
         });
 
         JPanel bottomArea = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -418,6 +408,27 @@ public class SeatPanel extends JPanel {
         p.add(bottomArea, BorderLayout.SOUTH);
 
         return p;
+    }
+
+    /**
+     * 인원 수가 변경되었을 때, 기존에 선택했던 좌석 정보를 모두 초기화하는 메소드
+     */
+    private void resetSeatSelection() {
+        // 1. 선택된 좌석 리스트 비우기
+        selectedSeats.clear();
+
+        // 2. 모든 좌석 버튼을 순회하며 색상 초기화
+        if (seatPanel != null) {
+            for (Component comp : seatPanel.getComponents()) {
+                if (comp instanceof JButton) {
+                    JButton button = (JButton) comp;
+                    // 선택된 좌석(파란색)을 다시 원래의 빈 좌석 색으로 변경
+                    if (button.getBackground().equals(COLOR_SELECTED)) {
+                        button.setBackground(COLOR_EMPTY); // 일반 좌석
+                    }
+                }
+            }
+        }
     }
 
 
@@ -432,7 +443,11 @@ public class SeatPanel extends JPanel {
             total += s.getPrice();
         }
 
-        selectedLabel.setText("선택 좌석 : " + sb);
+        if (sb.length() == 0) {
+            selectedLabel.setText("선택 좌석 : 없음");
+        } else {
+            selectedLabel.setText("선택 좌석 : " + sb.toString().trim());
+        }
         priceLabel.setText("총 금액 : " + total + "원");
 
         revalidate();
@@ -484,4 +499,3 @@ public class SeatPanel extends JPanel {
 
 
 }
-

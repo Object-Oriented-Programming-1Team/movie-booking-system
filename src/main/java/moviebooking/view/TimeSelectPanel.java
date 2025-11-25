@@ -249,9 +249,8 @@ public class TimeSelectPanel extends JPanel implements GuiConstants {
         button.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 
         button.addActionListener(e ->{
-            // TODO: 좌석 선택 화면 이동 로직
-            // mainController.showSeatPanel(screening);
             System.out.println("상영 선택됨: " + screening.getScreeningId());
+            mainController.showSeatSelectionView(screening);
         });
         return button;
     }

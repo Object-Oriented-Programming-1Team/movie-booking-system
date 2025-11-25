@@ -1,16 +1,16 @@
 package main.java.moviebooking.controller;
 
-import main.java.moviebooking.model.Movie;
-import main.java.moviebooking.model.Screening;
-import main.java.moviebooking.view.BookMoviePanel;
-import main.java.moviebooking.view.MainFrame;
-import main.java.moviebooking.view.TimeSelectPanel;
+import main.java.moviebooking.model.*;
+import main.java.moviebooking.view.*;
+
+import java.time.format.DateTimeFormatter;
 
 public class MainController {
 
     private MainFrame mainFrame;
     private BookMoviePanel bookMoviePanel;
     private TimeSelectPanel timeSelectPanel;
+    private PayPanel payPanel;
 
     public MainController(MainFrame mainFrame){
         this.mainFrame = mainFrame;
@@ -52,16 +52,36 @@ public class MainController {
         mainFrame.addPanel(seatPanel, "seat");
         mainFrame.showPanel("seat");
     }
-    //추가 : 결제 화면으로 넘어갈 때 사용되는 메서드
-    public void showPaymentView(Reservation reservation) {
-        // 현재 전달되는 데이터 목록
-        // - reservation.getMovie().getMovieTitle()  → 영화 제목
-        // - reservation.getScreening().getScreen().getScreenName() → 상영관 이름
-        // - reservation.getScreening().getStartTime() → 상영 시간
-        // - reservation.getSeatDisplayText() → 선택한 좌석들 (커플석 포함)
-        // - reservation.getTotalPrice() → 총 금액
 
+    public void setPayPanel(PayPanel payPanel){
+        this.payPanel = payPanel;
+    }
 
-        // PayPanel 연결
+    public void showPaymentView(Booking booking) {
+
+        String movieTitle = booking.getScreening().getMovie().getMovieTitle();
+        String screenName = booking.getScreening().getScreen().getScreenName();
+        String cinemaLine = "CGV 강변   " + screenName;
+
+        // 날짜 및 시간 포맷팅 (예: 2025.11.18 20:00)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+        String dateTimeLine = booking.getScreening().getStartTime().format(formatter);
+
+        StringBuilder seatSb = new StringBuilder();
+        if (booking.getSeats() != null) {
+            for (Seat seat : booking.getSeats()) {
+                seatSb.append(seat.getSeatNumber()).append(" ");
+            }
+        }
+        String seatLine = seatSb.toString().trim();
+
+        // 4. 총 금액 (Booking 객체에서 직접 가져오기) [수정된 부분]
+        String totalPriceText = booking.getTotalPrice() + "원";
+
+        // 5. PayPanel에 정보 전달 및 화면 전환
+        if (payPanel != null) {
+            payPanel.setReservationInfo(cinemaLine, movieTitle, dateTimeLine, seatLine, totalPriceText);
+        }
+        mainFrame.showPanel("pay");
     }
 }
