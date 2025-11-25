@@ -7,6 +7,9 @@ public class Seat {
     //private String seatType;
     private int price;
 
+    //추가
+    private boolean coupleSeat = false;
+
     public Seat(String seatNumber, boolean isBooked, int defaultPrice) {
         this.seatNumber = seatNumber;
         this.isBooked = isBooked;
@@ -36,4 +39,13 @@ public class Seat {
     public void setPrice(int price) {
         this.price = price;
     }
+    //추가 : 커플석
+    public boolean isCoupleSeat() {
+        return coupleSeat;
+    }
+
+    public void setCoupleSeat(boolean coupleSeat) {
+        this.coupleSeat = coupleSeat;
+    }
+
 }
