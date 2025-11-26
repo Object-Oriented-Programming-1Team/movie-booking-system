@@ -94,7 +94,7 @@ public class CheckReservationsPanel extends JPanel implements GuiConstants {
         JButton backButton = new JButton("◀");
         backButton.setBackground(Color.BLACK);
         backButton.setForeground(Color.WHITE);
-        backButton.setFont(new Font(ENGLISH_FONT, Font.BOLD, 25));
+        backButton.setFont(new Font(KOREAN_FONT, Font.BOLD, 30));
         backButton.setFocusPainted(false);
         backButton.setBorderPainted(false);
         backButton.setOpaque(true);

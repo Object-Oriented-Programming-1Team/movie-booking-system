@@ -106,8 +106,8 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
         // BaseFrame의 메서드 대신 Controller를 사용
         JButton backButton = new JButton("◀");
         backButton.setBackground(Color.BLACK);
-        backButton.setForeground(Color.GRAY);
-        backButton.setFont(new Font(KOREAN_FONT, Font.BOLD, 50));
+        backButton.setForeground(Color.WHITE);
+        backButton.setFont(new Font(KOREAN_FONT, Font.BOLD, 30));
         backButton.setOpaque(true);
         backButton.setBorderPainted(false);
 

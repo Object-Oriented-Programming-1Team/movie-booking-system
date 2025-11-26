@@ -6,6 +6,8 @@ import main.java.moviebooking.view.*;
 
 import javax.swing.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class MainController {
@@ -73,21 +75,20 @@ public class MainController {
     public void setReservationResultPanel(ReservationResultPanel reservationResultPanel) {
         this.reservationResultPanel = reservationResultPanel;
     }
+    // 기존: 단일 Booking을 받아서 처리
     public void showReservationResultView(Booking booking) {
-        if (reservationResultPanel != null) {
-            // Booking 객체에서 정보를 꺼내 Result 패널에 세팅
-            String bookingNumber = booking.getBookingId().substring(0, 8).toUpperCase(); // ID 일부만 표시
-            String screenName = booking.getScreening().getScreen().getScreenName();
-            String cinemaLine = "CGV 강변   " + screenName; // 날짜 정보 등 추가 가능
-            String movieTitle = booking.getScreening().getMovie().getMovieTitle();
+        // 단일 객체를 리스트로 감싸서 전달
+        List<Booking> list = new ArrayList<>();
+        list.add(booking);
+        showReservationResultList(list);
+    }
 
-            String seatInfo = booking.getSeats().stream()
-                    .map(Seat::getSeatNumber)
-                    .collect(Collectors.joining(", ")) + " (" + screenName + ")";
-
-            reservationResultPanel.setReservationResult(bookingNumber, cinemaLine, movieTitle, seatInfo);
-        }
-        mainFrame.showPanel("result"); // Main.java에서 "result"라는 이름으로 등록해야 함
+    // 추가: Booking 리스트를 받아서 처리
+    public void showReservationResultList(List<Booking> bookings) {
+//        if (reservationResultPanel != null) {
+//            reservationResultPanel.setBookingList(bookings);
+//        }
+        mainFrame.showPanel("result");
     }
 
     public void saveBooking(Booking booking) {

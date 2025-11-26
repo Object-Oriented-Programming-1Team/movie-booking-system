@@ -193,13 +193,13 @@ public class ShowAllMoviesPanel extends JPanel implements GuiConstants {
         bottomPanel.setBackground(Color.BLACK);
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 30));
 
-        JButton getTicketButton = new JButton("GET TICKET");
-        getTicketButton.setBackground(DARK_BLUE_COLOR);
-        getTicketButton.setForeground(RED_COLOR);
-        getTicketButton.setFont(new Font(ENGLISH_FONT, Font.BOLD, 24));
-        getTicketButton.setFocusPainted(false);
-        
-        bottomPanel.add(getTicketButton);
+//        JButton getTicketButton = new JButton("GET TICKET");
+//        getTicketButton.setBackground(DARK_BLUE_COLOR);
+//        getTicketButton.setForeground(RED_COLOR);
+//        getTicketButton.setFont(new Font(ENGLISH_FONT, Font.BOLD, 24));
+//        getTicketButton.setFocusPainted(false);
+//
+//        bottomPanel.add(getTicketButton);
         return bottomPanel;
     }
 }

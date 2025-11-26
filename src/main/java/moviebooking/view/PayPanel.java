@@ -9,6 +9,7 @@ import main.java.moviebooking.model.User;
 import javax.swing.*;
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -47,13 +48,28 @@ public class PayPanel extends JPanel implements GuiConstants {
         topPanel.setBackground(Color.BLACK);
         topPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 5, 15));
 
-        JButton backButton = new JButton("<");
+        JButton backButton = new JButton("◀") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                if (getModel().isArmed()) {
+                    g.setColor(Color.DARK_GRAY); // 눌렀을 때
+                } else {
+                    g.setColor(Color.BLACK);     // 평소 상태
+                }
+                // 버튼 영역 전체를 사각형으로 채움
+                g.fillRect(0, 0, getWidth(), getHeight());
+                super.paintComponent(g);
+            }
+        };
         backButton.setBackground(Color.BLACK);
         backButton.setForeground(Color.WHITE);
-        backButton.setFont(new Font(ENGLISH_FONT, Font.BOLD, 18));
+        backButton.setFont(new Font(KOREAN_FONT, Font.BOLD, 30));
+
+        // 맥OS 이슈 해결을 위한 필수 설정
         backButton.setFocusPainted(false);
         backButton.setBorderPainted(false);
-        backButton.setOpaque(true);
+        backButton.setContentAreaFilled(false); // 기본 배경 그리기 끔
+        backButton.setOpaque(false);            // 투명 처리 후 위에서 직접 그림
 
         // 나중에 좌석 선택 화면으로 돌아가는 기능 연결
         backButton.addActionListener(new java.awt.event.ActionListener() {
@@ -254,9 +270,10 @@ public class PayPanel extends JPanel implements GuiConstants {
 
         // 4. 결제 완료 메시지 및 화면 이동
         JOptionPane.showMessageDialog(this, "결제가 완료되었습니다!\n예매 내역 화면으로 이동합니다.");
-
+        ArrayList<Booking> bookingList = new ArrayList<>();
+        bookingList.add(booking);
         // MainController를 통해 결과 화면으로 이동
-        mainController.showReservationResultView(booking);
+        mainController.showReservationResultList(bookingList);
     }
 
     /**

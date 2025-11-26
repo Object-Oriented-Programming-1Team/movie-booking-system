@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static main.java.moviebooking.common.GuiConstants.KOREAN_FONT;
+
 public class SeatPanel extends JPanel {
     private Screen screen;
     private Screening screening;
@@ -50,7 +52,9 @@ public class SeatPanel extends JPanel {
 
         // ⬅ 뒤로가기 버튼
         JButton backBtn = new JButton("◀");
-        backBtn.setFont(new Font("맑은 고딕", Font.BOLD, 30));
+        backBtn.setBackground(Color.BLACK);
+        backBtn.setForeground(Color.WHITE);
+        backBtn.setFont(new Font(KOREAN_FONT, Font.BOLD, 30));
         backBtn.setBackground(COLOR_BG);
         backBtn.setForeground(Color.WHITE);
         backBtn.setBorderPainted(false);
