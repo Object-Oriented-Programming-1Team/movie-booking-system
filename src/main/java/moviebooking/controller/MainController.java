@@ -4,6 +4,7 @@ import main.java.moviebooking.model.*;
 import main.java.moviebooking.view.*;
 
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
 
 public class MainController {
 
@@ -11,6 +12,7 @@ public class MainController {
     private BookMoviePanel bookMoviePanel;
     private TimeSelectPanel timeSelectPanel;
     private PayPanel payPanel;
+    private ReservationResultPanel reservationResultPanel;
 
     public MainController(MainFrame mainFrame){
         this.mainFrame = mainFrame;
@@ -59,29 +61,30 @@ public class MainController {
 
     public void showPaymentView(Booking booking) {
 
-        String movieTitle = booking.getScreening().getMovie().getMovieTitle();
-        String screenName = booking.getScreening().getScreen().getScreenName();
-        String cinemaLine = "CGV 강변   " + screenName;
-
-        // 날짜 및 시간 포맷팅 (예: 2025.11.18 20:00)
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
-        String dateTimeLine = booking.getScreening().getStartTime().format(formatter);
-
-        StringBuilder seatSb = new StringBuilder();
-        if (booking.getSeats() != null) {
-            for (Seat seat : booking.getSeats()) {
-                seatSb.append(seat.getSeatNumber()).append(" ");
-            }
-        }
-        String seatLine = seatSb.toString().trim();
-
-        // 4. 총 금액 (Booking 객체에서 직접 가져오기) [수정된 부분]
-        String totalPriceText = booking.getTotalPrice() + "원";
-
-        // 5. PayPanel에 정보 전달 및 화면 전환
         if (payPanel != null) {
-            payPanel.setReservationInfo(cinemaLine, movieTitle, dateTimeLine, seatLine, totalPriceText);
+            payPanel.setBooking(booking);
         }
         mainFrame.showPanel("pay");
     }
+
+    public void setReservationResultPanel(ReservationResultPanel reservationResultPanel) {
+        this.reservationResultPanel = reservationResultPanel;
+    }
+    public void showReservationResultView(Booking booking) {
+        if (reservationResultPanel != null) {
+            // Booking 객체에서 정보를 꺼내 Result 패널에 세팅
+            String bookingNumber = booking.getBookingId().substring(0, 8).toUpperCase(); // ID 일부만 표시
+            String screenName = booking.getScreening().getScreen().getScreenName();
+            String cinemaLine = "CGV 강변   " + screenName; // 날짜 정보 등 추가 가능
+            String movieTitle = booking.getScreening().getMovie().getMovieTitle();
+
+            String seatInfo = booking.getSeats().stream()
+                    .map(Seat::getSeatNumber)
+                    .collect(Collectors.joining(", ")) + " (" + screenName + ")";
+
+            reservationResultPanel.setReservationResult(bookingNumber, cinemaLine, movieTitle, seatInfo);
+        }
+        mainFrame.showPanel("result"); // Main.java에서 "result"라는 이름으로 등록해야 함
+    }
+
 }

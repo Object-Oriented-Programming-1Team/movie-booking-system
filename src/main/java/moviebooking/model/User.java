@@ -4,6 +4,16 @@ public class User {
     private String userId;
     private String username;
     private String password;
+    private String phoneNumber;
+
+    // 기본 생성자
+    public User() {}
+
+    // 편의를 위한 생성자
+    public User(String username, String phoneNumber) {
+        this.username = username;
+        this.phoneNumber = phoneNumber;
+    }
 
     public String getUserId() {
         return userId;

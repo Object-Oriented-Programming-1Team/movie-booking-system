@@ -38,6 +38,7 @@ public class Main {
             ShowAllMoviesPanel showAllMoviesPanel = new ShowAllMoviesPanel(mainController, movieManager, screeningManager);
             TimeSelectPanel timeSelectPanel = new TimeSelectPanel(mainController, screeningManager, screenManager);
             PayPanel payPanel = new PayPanel(mainController);
+            ReservationResultPanel reservationResultPanel = new ReservationResultPanel(mainController);
 
             // 3.4. Controller가 Panel들을 알도록 주입 (필요시)
             mainController.setBookMoviePanel(bookMoviePanel);

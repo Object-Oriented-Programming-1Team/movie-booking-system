@@ -2,9 +2,13 @@ package main.java.moviebooking.view;
 
 import main.java.moviebooking.common.GuiConstants;
 import main.java.moviebooking.controller.MainController;
+import main.java.moviebooking.model.Booking;
+import main.java.moviebooking.model.Seat;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
 
 /**
  * 좌석 선택 화면에서 "결제하기"를 눌렀을 때 보여줄 결제 정보 화면
@@ -12,6 +16,7 @@ import java.awt.*;
 public class PayPanel extends JPanel implements GuiConstants {
 
     private final MainController mainController;
+    private Booking booking;
 
     // --- 예매 정보 표시 라벨들 ---
     private JLabel cinemaInfoLabel;
@@ -19,6 +24,8 @@ public class PayPanel extends JPanel implements GuiConstants {
     private JLabel dateTimeLabel;
     private JLabel seatLabel;
     private JLabel totalPriceLabel;
+
+    private JTextField phoneField;
 
     public PayPanel(MainController mainController) {
         this.mainController = mainController;
@@ -52,8 +59,7 @@ public class PayPanel extends JPanel implements GuiConstants {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 System.out.println("뒤로가기: 좌석 선택 화면으로 이동 예정");
-                // TODO: screening객체를 받아야하는데 String으로 받아오니까 코드가 꼬임..
-//                mainController.showSeatSelectionView(screening);
+                mainController.showSeatSelectionView(booking.getScreening());
             }
         });
 
@@ -97,7 +103,7 @@ public class PayPanel extends JPanel implements GuiConstants {
                 BorderFactory.createEmptyBorder(15, 15, 15, 15)
         ));
 
-        cinemaInfoLabel = new JLabel("CGV 강변   2025.11.18(화) 20:00   4관");
+        cinemaInfoLabel = new JLabel("상영관 정보 로딩중... CGV 강변   2025.11.18(화) 20:00   4관");
         cinemaInfoLabel.setForeground(Color.WHITE);
         cinemaInfoLabel.setFont(new Font(KOREAN_FONT, Font.PLAIN, 12));
 
@@ -195,25 +201,22 @@ public class PayPanel extends JPanel implements GuiConstants {
         payButton.setOpaque(true);
         payButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        payButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
+        payButton.addActionListener(e -> {
+            String method = "카드결제"; // 기본값
+            if (kakaoPay.isSelected()) method = "카카오페이";
+            else if (phonePay.isSelected()) method = "휴대폰 결제";
 
-                String method = "선택 안 함";
+            // 실제 결제 로직이 들어갈 곳 (예: 매니저에게 저장 요청 등)
+            JOptionPane.showMessageDialog(
+                    PayPanel.this,
+                    "결제 수단: " + method + "\n총 " + booking.getFormattedTotalPrice() + " 결제가 완료되었습니다.",
+                    "결제 완료",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
 
-                if (cardPay.isSelected()) method = "카드결제";
-                else if (kakaoPay.isSelected()) method = "카카오페이";
-                else if (phonePay.isSelected()) method = "휴대폰 결제";
-
-                JOptionPane.showMessageDialog(
-                        PayPanel.this,
-                        "결제 수단: " + method + "\n결제 완료",
-                        "결제",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-            }
+            // 결제 완료 후 메인화면이나 결과화면으로 이동 로직 필요
+            // mainController.showReservationResultView(booking); // 예시
         });
-
         centerWrapper.add(payButton);
 
         return centerWrapper;
@@ -230,11 +233,32 @@ public class PayPanel extends JPanel implements GuiConstants {
     /**
      * 좌석 선택 화면에서 전달하는 예매 정보 저장용 메서드
      */
-    public void setReservationInfo(String cinemaLine, String movieTitle,String dateTimeLine,String seatLine,String totalPriceText) {
-        cinemaInfoLabel.setText(cinemaLine);
-        movieTitleLabel.setText(movieTitle);
+    public void setBooking(Booking booking) {
+        this.booking = booking;
+        updatePanelInfo();
+    }
+    private void updatePanelInfo() {
+        if (booking == null) return;
+
+        // 1. 상영관 정보 (예: CGV 강변 4관)
+        String screenName = booking.getScreening().getScreen().getScreenName();
+        cinemaInfoLabel.setText("CGV 강변   " + screenName);
+
+        // 2. 영화 제목
+        movieTitleLabel.setText(booking.getScreening().getMovie().getMovieTitle());
+
+        // 3. 상영 날짜 및 시간
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd(E) HH:mm");
+        String dateTimeLine = booking.getScreening().getStartTime().format(formatter);
         dateTimeLabel.setText(dateTimeLine);
-        seatLabel.setText(seatLine);
-        totalPriceLabel.setText(totalPriceText);
+
+        // 4. 좌석 정보 (좌석 번호들을 콤마로 연결)
+        String seatLine = booking.getSeats().stream()
+                .map(Seat::getSeatNumber)
+                .collect(Collectors.joining(", "));
+        seatLabel.setText("좌석: " + seatLine);
+
+        // 5. 총 금액
+        totalPriceLabel.setText("총 결제금액: " + booking.getFormattedTotalPrice());
     }
 }
