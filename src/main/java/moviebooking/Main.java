@@ -44,6 +44,7 @@ public class Main {
             mainController.setBookMoviePanel(bookMoviePanel);
             mainController.setTimeSelectPanel(timeSelectPanel);
             mainController.setPayPanel(payPanel);
+            mainController.setReservationResultPanel(reservationResultPanel);
 
             // 3.5. '창'에 '내용물'들을 '카드'로 등록
             mainFrame.addPanel(movieListPanel, "movieList");

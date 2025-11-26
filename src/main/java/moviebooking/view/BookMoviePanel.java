@@ -150,7 +150,6 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
         bookButton.setOpaque(true);
         bookButton.setBorderPainted(false);
         bookButton.addActionListener(e -> {
-            //TODO: Controller를 통해 좌석선택화면으로 이동
             mainController.showTimeSelectView(movie);
         });
         return bookButton;

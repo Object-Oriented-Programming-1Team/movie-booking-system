@@ -75,24 +75,21 @@ public class MainController {
     public void setReservationResultPanel(ReservationResultPanel reservationResultPanel) {
         this.reservationResultPanel = reservationResultPanel;
     }
-    // 기존: 단일 Booking을 받아서 처리
+
     public void showReservationResultView(Booking booking) {
-        // 단일 객체를 리스트로 감싸서 전달
         List<Booking> list = new ArrayList<>();
         list.add(booking);
         showReservationResultList(list);
     }
 
-    // 추가: Booking 리스트를 받아서 처리
     public void showReservationResultList(List<Booking> bookings) {
-//        if (reservationResultPanel != null) {
-//            reservationResultPanel.setBookingList(bookings);
-//        }
+       if (reservationResultPanel != null) {
+           reservationResultPanel.setBookingList(bookings);
+       }
         mainFrame.showPanel("result");
     }
 
     public void saveBooking(Booking booking) {
-        // 매니저가 실제로 저장
         if (bookingManager != null) {
             bookingManager.save(booking);
         }
@@ -102,16 +99,42 @@ public class MainController {
     public void setBookingManager(BookingManager bookingManager) {
         this.bookingManager = bookingManager;
     }
-    public void searchBooking(String bookingId) {
+
+    public void searchBooking(String inputStr) {
         if (bookingManager == null) {
             System.out.println("[ERROR] BookingManager가 설정되지 않았습니다.");
             return;
         }
 
-        Booking booking = bookingManager.findById(bookingId);
+        Booking booking = bookingManager.findById(inputStr);
 
         if (booking != null) {
-            showReservationResultView(booking);
+            List<Booking> singleList = new ArrayList<>();
+            singleList.add(booking);
+            showReservationResultList(singleList); 
+        } else {
+            List<Booking> bookings = bookingManager.findByPhoneNumber(inputStr);
+            if (bookings != null && !bookings.isEmpty()) {
+                showReservationResultList(bookings);
+            } else {
+                JOptionPane.showMessageDialog(mainFrame,
+                        "해당 정보로 예약을 찾을 수 없습니다.",
+                        "조회 실패",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    public void searchBookingByPhone(String phoneNumber){
+        if (bookingManager == null) {
+            System.out.println("[ERROR] BookingManager가 설정되지 않았습니다.");
+            return;
+        }
+
+        List<Booking> bookings = bookingManager.findByPhoneNumber(phoneNumber);
+
+        if (bookings != null) {
+            showReservationResultList(bookings);
         } else {
             JOptionPane.showMessageDialog(mainFrame,
                     "해당 예약 번호를 찾을 수 없습니다.",

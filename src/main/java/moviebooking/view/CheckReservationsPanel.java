@@ -146,7 +146,7 @@ public class CheckReservationsPanel extends JPanel implements GuiConstants {
         bookingNumberField.setMaximumSize(fieldSize);
         bookingNumberField.setFont(new Font(KOREAN_FONT, Font.PLAIN, 14));
         bookingNumberField.setAlignmentX(Component.CENTER_ALIGNMENT);
-        setupPlaceholder(bookingNumberField, "예약번호");
+        setupPlaceholder(bookingNumberField, "예약번호 및 전화번호");
 
         formPanel.add(bookingNumberField);
         formPanel.add(Box.createVerticalStrut(40));
@@ -163,15 +163,16 @@ public class CheckReservationsPanel extends JPanel implements GuiConstants {
 
         // 조회 버튼 클릭 시 -> Controller에게 검색 위임
         searchButton.addActionListener(e -> {
-            String bookingNo = bookingNumberField.getText().trim();
+            
+            String input = bookingNumberField.getText().trim();
 
-            if (bookingNo.isEmpty() || bookingNo.equals("예약번호")) {
-                JOptionPane.showMessageDialog(this, "예약번호를 입력해주세요.", "알림", JOptionPane.WARNING_MESSAGE);
+            if (input.isEmpty() || input.equals("예약번호 및 전화번호")) {
+                JOptionPane.showMessageDialog(this, "예약번호 및 전화번호를 입력해주세요.", "알림", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
             // 실제 조회 로직 호출
-            mainController.searchBooking(bookingNo);
+            mainController.searchBooking(input);
         });
 
         formPanel.add(searchButton);
