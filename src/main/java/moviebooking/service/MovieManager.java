@@ -28,8 +28,18 @@ public class MovieManager extends BaseManager<Movie, String> {
             movie.setStatus(scan.next());
             movie.setPosterUrl(scan.next());
 
+            // 추가 plot
+            if (scan.hasNext()) {
+                String plotWithUnderBar = scan.next();
+                movie.setPlot(plotWithUnderBar.replace("_", " "));
+            } else {
+                movie.setPlot("줄거리 정보 없음");
+            }
+
             movie.setMovieTitle(titleWithUnderBar.replace("_", " "));
             return movie;
+
+
 
         } catch (InputMismatchException e){
             System.out.println("[ERROR] MovieManager: InputMismatch " + e.getMessage());

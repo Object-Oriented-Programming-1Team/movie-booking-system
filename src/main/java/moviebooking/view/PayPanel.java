@@ -4,6 +4,7 @@ import main.java.moviebooking.common.GuiConstants;
 import main.java.moviebooking.controller.MainController;
 import main.java.moviebooking.model.Booking;
 import main.java.moviebooking.model.Seat;
+import main.java.moviebooking.model.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -67,7 +68,6 @@ public class PayPanel extends JPanel implements GuiConstants {
         return topPanel;
     }
 
-    /** 가운데 예매 정보 + 결제 수단 선택 UI */
     private JComponent createCenterPanel() {
 
         JPanel centerWrapper = new JPanel();
@@ -75,24 +75,15 @@ public class PayPanel extends JPanel implements GuiConstants {
         centerWrapper.setLayout(new BoxLayout(centerWrapper, BoxLayout.Y_AXIS));
         centerWrapper.setBorder(BorderFactory.createEmptyBorder(10, 40, 40, 40));
 
-        // --------------------
-        //  예매 정보 확인 제목
-        // --------------------
+        // ==========================================
+        // 1. 예매 정보 확인 섹션 (순서 수정됨)
+        // ==========================================
         JLabel infoTitleLabel = new JLabel("예매 정보 확인", SwingConstants.CENTER);
-        infoTitleLabel.setOpaque(true);
-        infoTitleLabel.setBackground(RED_COLOR);
-        infoTitleLabel.setForeground(Color.WHITE);
-        infoTitleLabel.setFont(new Font(KOREAN_FONT, Font.BOLD, 18));
-        infoTitleLabel.setPreferredSize(new Dimension(250, 40));
-        infoTitleLabel.setMaximumSize(new Dimension(250, 40));
-        infoTitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        styleTitleLabel(infoTitleLabel);
         centerWrapper.add(infoTitleLabel);
-
         centerWrapper.add(Box.createVerticalStrut(15));
 
-        // -------------------
-        //  예매 정보 박스
-        // -------------------
+        // 정보 박스 구성
         JPanel infoBox = new JPanel();
         infoBox.setBackground(Color.BLACK);
         infoBox.setLayout(new BoxLayout(infoBox, BoxLayout.Y_AXIS));
@@ -103,25 +94,18 @@ public class PayPanel extends JPanel implements GuiConstants {
                 BorderFactory.createEmptyBorder(15, 15, 15, 15)
         ));
 
-        cinemaInfoLabel = new JLabel("상영관 정보 로딩중... CGV 강변   2025.11.18(화) 20:00   4관");
-        cinemaInfoLabel.setForeground(Color.WHITE);
-        cinemaInfoLabel.setFont(new Font(KOREAN_FONT, Font.PLAIN, 12));
+        // 라벨 초기화 및 추가
+        cinemaInfoLabel = new JLabel("상영관 정보 로딩중...");
+        movieTitleLabel = new JLabel("영화 제목");
+        dateTimeLabel = new JLabel("시간");
+        seatLabel = new JLabel("좌석");
+        totalPriceLabel = new JLabel("금액");
 
-        movieTitleLabel = new JLabel("영화 제목 표시");
-        movieTitleLabel.setForeground(Color.WHITE);
-        movieTitleLabel.setFont(new Font(KOREAN_FONT, Font.BOLD, 18));
-
-        dateTimeLabel = new JLabel("상영 시간 표시");
-        dateTimeLabel.setForeground(Color.WHITE);
-        dateTimeLabel.setFont(new Font(KOREAN_FONT, Font.PLAIN, 14));
-
-        seatLabel = new JLabel("좌석 정보 표시");
-        seatLabel.setForeground(Color.WHITE);
-        seatLabel.setFont(new Font(KOREAN_FONT, Font.PLAIN, 14));
-
-        totalPriceLabel = new JLabel("총 금액 표시");
-        totalPriceLabel.setForeground(Color.WHITE);
-        totalPriceLabel.setFont(new Font(KOREAN_FONT, Font.BOLD, 14));
+        styleInfoLabel(cinemaInfoLabel, Font.PLAIN, 12);
+        styleInfoLabel(movieTitleLabel, Font.BOLD, 18);
+        styleInfoLabel(dateTimeLabel, Font.PLAIN, 14);
+        styleInfoLabel(seatLabel, Font.PLAIN, 14);
+        styleInfoLabel(totalPriceLabel, Font.BOLD, 14);
 
         infoBox.add(cinemaInfoLabel);
         infoBox.add(Box.createVerticalStrut(8));
@@ -133,28 +117,32 @@ public class PayPanel extends JPanel implements GuiConstants {
         infoBox.add(Box.createVerticalStrut(10));
         infoBox.add(totalPriceLabel);
 
+        // ★ 중요: 정보 박스를 먼저 추가해야 함
         centerWrapper.add(infoBox);
-
         centerWrapper.add(Box.createVerticalStrut(30));
 
-        // --------------------
-        //  결제 수단 선택 제목
-        // --------------------
-        JLabel payTitleLabel = new JLabel("결제 수단 선택", SwingConstants.CENTER);
-        payTitleLabel.setOpaque(true);
-        payTitleLabel.setBackground(RED_COLOR);
-        payTitleLabel.setForeground(Color.WHITE);
-        payTitleLabel.setFont(new Font(KOREAN_FONT, Font.BOLD, 18));
-        payTitleLabel.setPreferredSize(new Dimension(250, 40));
-        payTitleLabel.setMaximumSize(new Dimension(250, 40));
-        payTitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        centerWrapper.add(payTitleLabel);
 
+        // ==========================================
+        // 2. 예매자 정보 섹션 (전화번호)
+        // ==========================================
+        JLabel userTitleLabel = new JLabel("예매자 정보", SwingConstants.CENTER);
+        styleTitleLabel(userTitleLabel);
+        centerWrapper.add(userTitleLabel);
         centerWrapper.add(Box.createVerticalStrut(15));
 
-        // --------------------
-        //  결제 수단 박스
-        // --------------------
+        JPanel userBox = createUserBox();
+        centerWrapper.add(userBox);
+        centerWrapper.add(Box.createVerticalStrut(30));
+
+
+        // ==========================================
+        // 3. 결제 수단 선택 섹션
+        // ==========================================
+        JLabel payTitleLabel = new JLabel("결제 수단 선택", SwingConstants.CENTER);
+        styleTitleLabel(payTitleLabel);
+        centerWrapper.add(payTitleLabel);
+        centerWrapper.add(Box.createVerticalStrut(15));
+
         JPanel payBox = new JPanel();
         payBox.setBackground(Color.BLACK);
         payBox.setLayout(new BoxLayout(payBox, BoxLayout.Y_AXIS));
@@ -166,7 +154,6 @@ public class PayPanel extends JPanel implements GuiConstants {
         ));
 
         ButtonGroup payGroup = new ButtonGroup();
-
         JRadioButton cardPay = new JRadioButton("카드결제");
         JRadioButton kakaoPay = new JRadioButton("카카오페이");
         JRadioButton phonePay = new JRadioButton("휴대폰 결제");
@@ -174,6 +161,7 @@ public class PayPanel extends JPanel implements GuiConstants {
         styleRadio(cardPay);
         styleRadio(kakaoPay);
         styleRadio(phonePay);
+        cardPay.setSelected(true); // 기본값 선택
 
         payGroup.add(cardPay);
         payGroup.add(kakaoPay);
@@ -186,12 +174,12 @@ public class PayPanel extends JPanel implements GuiConstants {
         payBox.add(phonePay);
 
         centerWrapper.add(payBox);
-
         centerWrapper.add(Box.createVerticalStrut(25));
 
-        // --------------------
-        // ⑤ 결제하기 버튼
-        // --------------------
+
+        // ==========================================
+        // 4. 결제하기 버튼
+        // ==========================================
         JButton payButton = new JButton("결제하기");
         payButton.setBackground(RED_COLOR);
         payButton.setForeground(Color.WHITE);
@@ -200,29 +188,30 @@ public class PayPanel extends JPanel implements GuiConstants {
         payButton.setBorderPainted(false);
         payButton.setOpaque(true);
         payButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        payButton.setPreferredSize(new Dimension(200, 50)); // 버튼 크기 고정
 
-        payButton.addActionListener(e -> {
-            String method = "카드결제"; // 기본값
-            if (kakaoPay.isSelected()) method = "카카오페이";
-            else if (phonePay.isSelected()) method = "휴대폰 결제";
-
-            // 실제 결제 로직이 들어갈 곳 (예: 매니저에게 저장 요청 등)
-            JOptionPane.showMessageDialog(
-                    PayPanel.this,
-                    "결제 수단: " + method + "\n총 " + booking.getFormattedTotalPrice() + " 결제가 완료되었습니다.",
-                    "결제 완료",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
-
-            // 결제 완료 후 메인화면이나 결과화면으로 이동 로직 필요
-            // mainController.showReservationResultView(booking); // 예시
-        });
+        payButton.addActionListener(e -> processPayment());
         centerWrapper.add(payButton);
 
         return centerWrapper;
     }
 
-    /** 라디오버튼 공통 스타일 */
+    private void styleInfoLabel(JLabel label, int style, int size) {
+        label.setForeground(Color.WHITE);
+        label.setFont(new Font(KOREAN_FONT, style, size));
+    }
+
+    //스타일
+    private void styleTitleLabel(JLabel label) {
+        label.setOpaque(true);
+        label.setBackground(RED_COLOR);
+        label.setForeground(Color.WHITE);
+        label.setFont(new Font(KOREAN_FONT, Font.BOLD, 18));
+        label.setPreferredSize(new Dimension(250, 40));
+        label.setMaximumSize(new Dimension(250, 40));
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+    }
+
     private void styleRadio(JRadioButton radio) {
         radio.setBackground(Color.BLACK);
         radio.setForeground(Color.WHITE);
@@ -230,11 +219,52 @@ public class PayPanel extends JPanel implements GuiConstants {
         radio.setFocusPainted(false);
     }
 
+    private JPanel createUserBox() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panel.setBackground(Color.BLACK);
+        panel.setMaximumSize(new Dimension(360, 60));
+
+        JLabel phoneLabel = new JLabel("전화번호 : ");
+        phoneLabel.setForeground(Color.WHITE);
+        phoneLabel.setFont(new Font(KOREAN_FONT, Font.BOLD, 16));
+
+        phoneField = new JTextField(11); // 01012345678
+        phoneField.setFont(new Font(KOREAN_FONT, Font.PLAIN, 16));
+        phoneField.setHorizontalAlignment(JTextField.CENTER);
+
+        panel.add(phoneLabel);
+        panel.add(phoneField);
+        return panel;
+    }
+
+    private void processPayment() {
+        // 1. 전화번호 입력 확인
+        String phoneNumber = phoneField.getText().trim();
+        if (phoneNumber.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "전화번호를 입력해주세요.", "입력 오류", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // 2. User 객체 생성 및 Booking에 저장
+        // (이름은 현재 입력받지 않으므로 'Guest'로 설정하거나 추후 확장 가능)
+        User user = new User("Guest", phoneNumber);
+        booking.setUser(user);
+
+        mainController.saveBooking(booking);
+
+        // 4. 결제 완료 메시지 및 화면 이동
+        JOptionPane.showMessageDialog(this, "결제가 완료되었습니다!\n예매 내역 화면으로 이동합니다.");
+
+        // MainController를 통해 결과 화면으로 이동
+        mainController.showReservationResultView(booking);
+    }
+
     /**
      * 좌석 선택 화면에서 전달하는 예매 정보 저장용 메서드
      */
     public void setBooking(Booking booking) {
         this.booking = booking;
+        phoneField.setText("");
         updatePanelInfo();
     }
     private void updatePanelInfo() {

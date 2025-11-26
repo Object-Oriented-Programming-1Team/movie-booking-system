@@ -1,9 +1,6 @@
 package main.java.moviebooking;
 import main.java.moviebooking.controller.MainController;
-import main.java.moviebooking.service.MovieManager;
-import main.java.moviebooking.service.ScreenManager;
-import main.java.moviebooking.service.ScreeningFactory;
-import main.java.moviebooking.service.ScreeningManager;
+import main.java.moviebooking.service.*;
 import main.java.moviebooking.view.*;
 
 import javax.swing.SwingUtilities;
@@ -16,6 +13,7 @@ public class Main {
         ScreenManager screenManager = new ScreenManager();
         ScreeningFactory screeningFactory = new ScreeningFactory();
         ScreeningManager screeningManager = new ScreeningManager(screeningFactory, movieManager, screenManager);
+        BookingManager bookingManager = new BookingManager();
 
         // 2. 데이터 로드 (동일)
         movieManager.loadData("main/java/resources/movies.txt");
@@ -30,6 +28,8 @@ public class Main {
 
             // 3.2. '화면 전환기' 생성 (창 주입)
             MainController mainController = new MainController(mainFrame);
+            // [추가] 컨트롤러에 BookingManager 주입 ★★★
+            mainController.setBookingManager(bookingManager);
 
             // 3.3. '내용물(패널)'들 생성 (Controller와 Manager 주입)
             MovieListPanel movieListPanel = new MovieListPanel(movieManager, screenManager, screeningManager,mainController);
@@ -52,6 +52,7 @@ public class Main {
             mainFrame.addPanel(showAllMoviesPanel, "allMovies");
             mainFrame.addPanel(timeSelectPanel, "timeSelect");
             mainFrame.addPanel(payPanel, "pay");
+            mainFrame.addPanel(reservationResultPanel, "result");
 
             // 3.6. 프로그램 시작
             mainFrame.setVisible(true);

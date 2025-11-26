@@ -1,8 +1,10 @@
 package main.java.moviebooking.controller;
 
 import main.java.moviebooking.model.*;
+import main.java.moviebooking.service.BookingManager;
 import main.java.moviebooking.view.*;
 
+import javax.swing.*;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
@@ -13,6 +15,7 @@ public class MainController {
     private TimeSelectPanel timeSelectPanel;
     private PayPanel payPanel;
     private ReservationResultPanel reservationResultPanel;
+    private BookingManager bookingManager;
 
     public MainController(MainFrame mainFrame){
         this.mainFrame = mainFrame;
@@ -87,4 +90,32 @@ public class MainController {
         mainFrame.showPanel("result"); // Main.java에서 "result"라는 이름으로 등록해야 함
     }
 
+    public void saveBooking(Booking booking) {
+        // 매니저가 실제로 저장
+        if (bookingManager != null) {
+            bookingManager.save(booking);
+        }
+    }
+
+
+    public void setBookingManager(BookingManager bookingManager) {
+        this.bookingManager = bookingManager;
+    }
+    public void searchBooking(String bookingId) {
+        if (bookingManager == null) {
+            System.out.println("[ERROR] BookingManager가 설정되지 않았습니다.");
+            return;
+        }
+
+        Booking booking = bookingManager.findById(bookingId);
+
+        if (booking != null) {
+            showReservationResultView(booking);
+        } else {
+            JOptionPane.showMessageDialog(mainFrame,
+                    "해당 예약 번호를 찾을 수 없습니다.",
+                    "조회 실패",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }

@@ -8,6 +8,7 @@ public class Movie {
     private String genre;
     private String status;
     private String posterUrl;
+    private String plot; //줄거리
 
     public String getMovieTitle() {
         return movieTitle;
@@ -64,4 +65,10 @@ public class Movie {
     public void setPosterUrl(String posterUrl) {
         this.posterUrl = posterUrl;
     }
+
+    //추가 : 줄거리
+    public String getPlot() { return plot; }
+    public void setPlot(String plot) { this.plot = plot; }
+
+
 }

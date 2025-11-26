@@ -52,7 +52,7 @@ public class ShowAllMoviesPanel extends JPanel implements GuiConstants {
         topPanel.setBackground(Color.BLACK);
         topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JLabel logoLabel = new JLabel("Logo");
+        JLabel logoLabel = new JLabel("MVP");
         logoLabel.setForeground(Color.WHITE);
         logoLabel.setFont(new Font(ENGLISH_FONT, Font.BOLD, 30));
         topPanel.add(logoLabel, BorderLayout.WEST);

@@ -4,6 +4,15 @@ public class User {
     private String userId;
     private String username;
     private String password;
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     private String phoneNumber;
 
     // 기본 생성자
