@@ -141,11 +141,32 @@ public class TimeSelectPanel extends JPanel implements GuiConstants {
         }
     }
 
-    private JPanel createTopPanel(){
-        JButton backButton = new JButton("◀");
-        styleButton(backButton, 50);
+    private JPanel createTopPanel() {
+        // [수정] macOS에서도 배경색이 제대로 보이도록 커스텀 페인팅 적용
+        JButton backButton = new JButton("◀") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                if (getModel().isArmed()) {
+                    g.setColor(Color.DARK_GRAY); // 클릭 시 색상
+                } else {
+                    g.setColor(Color.BLACK);     // 평소 색상
+                }
+                g.fillRect(0, 0, getWidth(), getHeight());
+                super.paintComponent(g);
+            }
+        };
+
+        // 디자인 설정
         backButton.setBackground(Color.BLACK);
-        backButton.setForeground(Color.GRAY);
+        backButton.setForeground(Color.WHITE);
+        backButton.setFont(new Font(KOREAN_FONT, Font.BOLD, 30));
+
+        // 배경 렌더링 이슈 해결을 위한 필수 설정
+        backButton.setFocusPainted(false);
+        backButton.setBorderPainted(false);
+        backButton.setContentAreaFilled(false);
+        backButton.setOpaque(false);
+
         backButton.addActionListener(e -> mainController.showBookMovieView(movie));
 
         JLabel contextLabel = new JLabel("상영 시간 선택");
@@ -155,7 +176,7 @@ public class TimeSelectPanel extends JPanel implements GuiConstants {
 
         screenSelectPanel = new JPanel();
         screenSelectPanel.setBackground(Color.BLACK);
-        
+
         JPanel centerPanelOnTop = new JPanel();
         centerPanelOnTop.setBackground(Color.BLACK);
         centerPanelOnTop.add(createTitlePanel());
@@ -171,7 +192,7 @@ public class TimeSelectPanel extends JPanel implements GuiConstants {
         JLabel emptyLabel = new JLabel("   ");
         emptyLabel.setFont(new Font(KOREAN_FONT, Font.BOLD, 50));
         topPanel.add(emptyLabel, BorderLayout.EAST);
-        
+
         return topPanel;
     }
 
@@ -249,9 +270,8 @@ public class TimeSelectPanel extends JPanel implements GuiConstants {
         button.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 
         button.addActionListener(e ->{
-            // TODO: 좌석 선택 화면 이동 로직
-            // mainController.showSeatPanel(screening);
             System.out.println("상영 선택됨: " + screening.getScreeningId());
+            mainController.showSeatSelectionView(screening);
         });
         return button;
     }

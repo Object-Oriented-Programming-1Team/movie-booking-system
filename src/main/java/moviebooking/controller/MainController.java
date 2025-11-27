@@ -1,15 +1,23 @@
 package main.java.moviebooking.controller;
 
-import main.java.moviebooking.model.Movie;
-import main.java.moviebooking.view.BookMoviePanel;
-import main.java.moviebooking.view.MainFrame;
-import main.java.moviebooking.view.TimeSelectPanel;
+import main.java.moviebooking.model.*;
+import main.java.moviebooking.service.BookingManager;
+import main.java.moviebooking.view.*;
+
+import javax.swing.*;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainController {
 
     private MainFrame mainFrame;
     private BookMoviePanel bookMoviePanel;
     private TimeSelectPanel timeSelectPanel;
+    private PayPanel payPanel;
+    private ReservationResultPanel reservationResultPanel;
+    private BookingManager bookingManager;
 
     public MainController(MainFrame mainFrame){
         this.mainFrame = mainFrame;
@@ -43,5 +51,95 @@ public class MainController {
     public void showTimeSelectView(Movie movie){
         timeSelectPanel.setMovie(movie);
         mainFrame.showPanel("timeSelect");
+    }
+
+    //추가 [좌석 선택 화면]
+    public void showSeatSelectionView(Screening screening) {
+        SeatPanel seatPanel = new SeatPanel(screening, this);
+        mainFrame.addPanel(seatPanel, "seat");
+        mainFrame.showPanel("seat");
+    }
+
+    public void setPayPanel(PayPanel payPanel){
+        this.payPanel = payPanel;
+    }
+
+    public void showPaymentView(Booking booking) {
+
+        if (payPanel != null) {
+            payPanel.setBooking(booking);
+        }
+        mainFrame.showPanel("pay");
+    }
+
+    public void setReservationResultPanel(ReservationResultPanel reservationResultPanel) {
+        this.reservationResultPanel = reservationResultPanel;
+    }
+
+    public void showReservationResultView(Booking booking) {
+        List<Booking> list = new ArrayList<>();
+        list.add(booking);
+        showReservationResultList(list);
+    }
+
+    public void showReservationResultList(List<Booking> bookings) {
+       if (reservationResultPanel != null) {
+           reservationResultPanel.setBookingList(bookings);
+       }
+        mainFrame.showPanel("result");
+    }
+
+    public void saveBooking(Booking booking) {
+        if (bookingManager != null) {
+            bookingManager.save(booking);
+        }
+    }
+
+
+    public void setBookingManager(BookingManager bookingManager) {
+        this.bookingManager = bookingManager;
+    }
+
+    public void searchBooking(String inputStr) {
+        if (bookingManager == null) {
+            System.out.println("[ERROR] BookingManager가 설정되지 않았습니다.");
+            return;
+        }
+
+        Booking booking = bookingManager.findById(inputStr);
+
+        if (booking != null) {
+            List<Booking> singleList = new ArrayList<>();
+            singleList.add(booking);
+            showReservationResultList(singleList); 
+        } else {
+            List<Booking> bookings = bookingManager.findByPhoneNumber(inputStr);
+            if (bookings != null && !bookings.isEmpty()) {
+                showReservationResultList(bookings);
+            } else {
+                JOptionPane.showMessageDialog(mainFrame,
+                        "해당 정보로 예약을 찾을 수 없습니다.",
+                        "조회 실패",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    public void searchBookingByPhone(String phoneNumber){
+        if (bookingManager == null) {
+            System.out.println("[ERROR] BookingManager가 설정되지 않았습니다.");
+            return;
+        }
+
+        List<Booking> bookings = bookingManager.findByPhoneNumber(phoneNumber);
+
+        if (bookings != null) {
+            showReservationResultList(bookings);
+        } else {
+            JOptionPane.showMessageDialog(mainFrame,
+                    "해당 예약 번호를 찾을 수 없습니다.",
+                    "조회 실패",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

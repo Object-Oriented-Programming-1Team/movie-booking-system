@@ -29,6 +29,21 @@ public class ScreenManager extends BaseManager<Screen, String> {
             screen.setDefaultPrice(scan.nextInt());
             screen.setRows(scan.nextInt());
             screen.setCols(scan.nextInt());
+            //추가 : screenType 기반 자동 레이아웃 매핑
+//            switch (screen.getScreenType()) {
+//                case "IMAX":
+//                case "SphereX":
+//                case "ScreenX":
+//                    screen.setSeatLayoutType("MIDDLE_AISLE");
+//                    break;
+//
+//                case "3D":
+//                    screen.setSeatLayoutType("COUPLE_BACK");
+//                    break;
+//
+//                default:
+//                    screen.setSeatLayoutType("NORMAL");
+//            }
 
             screen.setScreenName(nameWithUnderBar.replace("_", " "));
             return screen;

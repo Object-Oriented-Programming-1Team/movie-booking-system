@@ -13,6 +13,10 @@ public class Screen {
     // 좌석마다 가격 차등 적용할 경우 변경 필요
 
 
+    //추가 : 관별 좌석 레이아웃 타입
+    private String seatLayoutType = "NORMAL";
+    // NORMAL / COUPLE_BACK / MIDDLE_AISLE
+
     public String getScreenId() {
         return screenId;
     }
@@ -59,5 +63,13 @@ public class Screen {
 
     public void setCols(int cols) {
         this.cols = cols;
+    }
+
+    public String getSeatLayoutType() {
+        return seatLayoutType;
+    }
+
+    public void setSeatLayoutType(String seatLayoutType) {
+        this.seatLayoutType = seatLayoutType;
     }
 }

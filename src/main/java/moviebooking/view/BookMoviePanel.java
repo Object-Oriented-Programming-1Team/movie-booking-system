@@ -25,21 +25,21 @@ import main.java.moviebooking.service.ScreeningManager;
 
 
 public class BookMoviePanel extends JPanel implements GuiConstants {
-    
+
     // Service & Controller
     private final MovieManager movieManager;
     private final ScreenManager screenManager;
     private final ScreeningManager screeningManager;
     private final MainController mainController;
 
-    private Movie movie; 
+    private Movie movie;
 
     private JLabel posterLabel;
     private JLabel titleLabel;
     private JLabel summaryDetailLabel;
     private JLabel dateValueLabel;
     private JTextArea plotArea;
-    
+
     private final int infoFontSize = 20;
     private final int titleFontSize = 40;
 
@@ -52,7 +52,7 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
         // JPanel 자체의 설정
         setBackground(Color.BLACK);
         setLayout(new BorderLayout(0, 20)); // 프레임의 BorderLayout
-    
+
         add(createTopPanel(), BorderLayout.NORTH);
         add(createCenterPanel(), BorderLayout.CENTER);
         add(createBottomPanel(), BorderLayout.SOUTH);
@@ -91,13 +91,10 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
         titleLabel.setText(movie.getMovieTitle());
         summaryDetailLabel.setText(movie.getRating()+" , "+movie.getGenre()+" , "+movie.getRuntime()+"분");
         dateValueLabel.setText(dateTimeFormatter(movie));
-        
-        // TODO: 줄거리 텍스트 추가 필요. 현재는 임의의 줄거리 입력했음
-        String plotText = "나의 믿은 좀비다. 이 세상 마지막 남은 유일한 좀비!\n\n"
-                        + "댄스 열정을 불태우는 사춘기 딸 '수아'와 함께 티격태격 일상을 보내는 맹수 전문 사육사 '정환'.\n"
-                        + "어느 날 갑자기 정환 앞에 나타난 좀비 '좀비'.\n"
-                        + "처음엔 경계하던 정환도 점차 좀비의 순수한 매력에 빠져들고,\n";
-        plotArea.setText(plotText);
+
+        //줄거리
+        plotArea.setText(movie.getPlot());
+
     }
 
 
@@ -105,15 +102,15 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(Color.BLACK);
         topPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
-        
+
         // BaseFrame의 메서드 대신 Controller를 사용
         JButton backButton = new JButton("◀");
         backButton.setBackground(Color.BLACK);
-        backButton.setForeground(Color.GRAY);
-        backButton.setFont(new Font(KOREAN_FONT, Font.BOLD, 50));
+        backButton.setForeground(Color.WHITE);
+        backButton.setFont(new Font(KOREAN_FONT, Font.BOLD, 30));
         backButton.setOpaque(true);
         backButton.setBorderPainted(false);
-        
+
         backButton.addActionListener(e -> {
             mainController.showAllMoviesView();
         });
@@ -131,7 +128,7 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
         centerPanel.add(createInformationPanel());
         return centerPanel;
     }
-    
+
     private JPanel createBottomPanel() {
         // (사용자님의 기존 코드: 줄거리(CENTER)와 버튼(EAST))
         JPanel bottomPanel = new JPanel(new BorderLayout(50,20));
@@ -153,7 +150,6 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
         bookButton.setOpaque(true);
         bookButton.setBorderPainted(false);
         bookButton.addActionListener(e -> {
-            //TODO: Controller를 통해 좌석선택화면으로 이동
             mainController.showTimeSelectView(movie);
         });
         return bookButton;
@@ -162,12 +158,12 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
     private JPanel createPosterPanel() {
         JPanel posterPanel = new JPanel();
         posterPanel.setBackground(Color.BLACK);
-        
+
         // '빈 껍데기' 라벨 (필드) 생성
         posterLabel = new JLabel();
         posterLabel.setPreferredSize(new Dimension(298, 420));
         posterLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        
+
         posterPanel.add(posterLabel);
         return posterPanel;
     }
@@ -176,7 +172,7 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
         JPanel informationPanel = new JPanel();
         informationPanel.setBackground(Color.BLACK);
         informationPanel.setLayout(new BoxLayout(informationPanel, BoxLayout.Y_AXIS));
-        
+
         informationPanel.add(createTitlePanel());
         informationPanel.add(createSummaryPanel());
         informationPanel.add(createOpeningDatePanel());
@@ -190,7 +186,7 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
         JPanel titlePanel = new JPanel(new FlowLayout());
         titlePanel.setBackground(RED_COLOR);
         titlePanel.setAlignmentX(Component.LEFT_ALIGNMENT); // BoxLayout 왼쪽 정렬
-        
+
         titleLabel = new JLabel("Loading...");
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setFont(new Font(KOREAN_FONT, Font.BOLD, titleFontSize));
@@ -202,15 +198,15 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
         JPanel summaryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         summaryPanel.setBackground(Color.BLACK);
         summaryPanel.setAlignmentX(Component.LEFT_ALIGNMENT); // BoxLayout 왼쪽 정렬
-        
+
         JLabel summaryLabel = new JLabel("개요: ");
         summaryLabel.setForeground(Color.GRAY);
         summaryLabel.setFont(new Font(KOREAN_FONT, Font.PLAIN, infoFontSize));
-        
+
         summaryDetailLabel = new JLabel("...");
         summaryDetailLabel.setForeground(Color.WHITE);
         summaryDetailLabel.setFont(new Font(KOREAN_FONT, Font.PLAIN, infoFontSize));
-        
+
         summaryPanel.add(summaryLabel);
         summaryPanel.add(summaryDetailLabel);
         summaryPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
@@ -221,15 +217,15 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
         JPanel openingDatePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         openingDatePanel.setBackground(Color.BLACK);
         openingDatePanel.setAlignmentX(Component.LEFT_ALIGNMENT); // BoxLayout 왼쪽 정렬
-        
+
         JLabel openingDateLabel = new JLabel("개봉일: ");
         openingDateLabel.setForeground(Color.GRAY);
         openingDateLabel.setFont(new Font(KOREAN_FONT, Font.PLAIN, infoFontSize));
-        
+
         dateValueLabel = new JLabel("...");
         dateValueLabel.setForeground(Color.WHITE);
         dateValueLabel.setFont(new Font(KOREAN_FONT, Font.PLAIN, infoFontSize));
-        
+
         openingDatePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 
         openingDatePanel.add(openingDateLabel);
@@ -239,7 +235,7 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
 
     private JScrollPane createPlotTextArea(){
         plotArea = new JTextArea("...");
-        plotArea.setFont(new Font(KOREAN_FONT, Font.PLAIN, 15));    
+        plotArea.setFont(new Font(KOREAN_FONT, Font.PLAIN, 15));
         plotArea.setBackground(Color.BLACK);
         plotArea.setForeground(Color.WHITE);
         plotArea.setEditable(false);
@@ -267,12 +263,12 @@ public class BookMoviePanel extends JPanel implements GuiConstants {
                 firstScreeningDateTime=curDateTime;
             }
         }
-        
+
         if(firstScreeningDateTime == LocalDateTime.MAX) {
             System.out.println("[WARNING] BookMoviePanel: 상영 정보가 없습니다. movieId: " + movie.getMovieId());
             return "상영 정보 없음";
         }
-        
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return firstScreeningDateTime.format(formatter);
     }
